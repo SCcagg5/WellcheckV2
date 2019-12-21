@@ -450,9 +450,6 @@ h1 {
 h1 {
     font-size: 2.4em;
 }
-.main-w3layouts {
-    padding: 2em 0 1em;
-}
 }
 @media(max-width:900px){
 .main-agileinfo {
@@ -616,9 +613,9 @@ input[type="submit"] {
 }
 
 .img-fluid {
-	width: 420px;
+  width: 320px;
   height: auto;
-	margin-left: calc(50% - 210px);
+  margin-left: calc(50% - 160px);
 }
 
 @media(max-width:545px){
@@ -634,3 +631,25 @@ input[type="submit"] {
 	}
 }
 /*-- //responsive-design --*/
+.main-agileinfo {
+    margin-top: 0px;
+}
+
+.agileits-top {
+    padding-top: 10px;
+    padding-down: 10px;
+}
+
+input.email, input.text.w3lpass {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="submit"] {
+    margin-top: 20px;
+    margin-down: 10px;
+}
+
+.main-w3layouts {
+	padding: 0px;
+}
