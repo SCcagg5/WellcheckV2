@@ -647,9 +647,13 @@ input.email, input.text.w3lpass {
 
 input[type="submit"] {
     margin-top: 20px;
-    margin-down: 10px;
+    margin-bottom: 10px;
 }
 
 .main-w3layouts {
 	padding: 0px;
+}
+
+input.text {
+	border-radius: 5px;
 }
