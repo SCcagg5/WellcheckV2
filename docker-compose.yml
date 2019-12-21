@@ -133,6 +133,7 @@ services:
         - /srv/nginx/data/vhost.d:/etc/nginx/vhost.d
         - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/tmp/docker.sock:ro
+        - ./nginx/logs:/var/log/nginx/
       networks:
         - proxy
 
