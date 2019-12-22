@@ -1,3 +1,5 @@
 /db/db
 __pycache__/
-/nginx
+/nginx/logs
+nginx/conf/default.conf
+

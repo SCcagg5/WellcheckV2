@@ -129,8 +129,8 @@ services:
         - 443:443
       volumes:
         - /srv/nginx/data/certs:/etc/nginx/certs:ro
-        - /srv/nginx/data/conf.d:/etc/nginx/conf.d
-        - /srv/nginx/data/vhost.d:/etc/nginx/vhost.d
+        - ./nginx/conf/:/etc/nginx/conf.d
+        - ./nginx/vhost/:/etc/nginx/vhost.d
         - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/tmp/docker.sock:ro
         - ./nginx/logs:/var/log/nginx/
