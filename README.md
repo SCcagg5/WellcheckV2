@@ -1,4 +1,4 @@
-# transport-api
+# wellcheckapi
 
 
 ### Routes's Basics:
@@ -20,7 +20,6 @@ Routes | Methods |
 `/orderdetail/` | POST |
 `/payments/` | GET |
 `/paymentdetails/` | POST |
-`/emulate/` | POST |
 `/adm/login/` | POST |
 `/adm/users/` | GET |
 `/adm/spoof/` | POST | 
