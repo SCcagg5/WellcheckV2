@@ -7,7 +7,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!DOCTYPE html>
 <html>
 <head>
-<title>Wellcheck</title>
+<title>Register - Wellcheck</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="" />
@@ -21,27 +21,26 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 </head>
 <body>
 	<!-- main -->
-	<div class="main-w3layouts wrapper">
+	<div id="register" class="main-w3layouts wrapper">
 		<img class="img-fluid" src="imgs/logo_v2.png" alt="">
 		<div class="main-agileinfo">
 			<div class="agileits-top">
-				<form action="/error/soon.html" method="post">
-					<input class="text email" type="email" name="email" placeholder="Email" required="">
-					<input class="text" type="password" name="password" placeholder="Password" required="">
-					<input class="text w3lpass" type="password" name="password" placeholder="Confirm Password" required="">
+					<input class="text email" type="email" name="email" v-model="email" placeholder="Email" required="">
+					<input class="text" type="password" name="password" v-model="password1" placeholder="Password" required="">
+					<input class="text w3lpass" type="password" name="password" v-model="password2" placeholder="Confirm Password" required="">
 					<div class="wthree-text">
 						<label class="anim">
-							<input type="checkbox" class="checkbox" required="">
+							<input type="checkbox" class="checkbox" v-model="conditions" required="">
 							<span>I Agree To The Terms & Conditions</span>
 						</label>
 						<div class="clear"> </div>
 					</div>
-					<input type="submit" value="SIGN UP">
-				</form>
+					<input type="submit" value="SIGN UP" v-on:click="register">
 				<p>Already have an account ? <a href="./login.html"> Login Now!</a></p>
 			</div>
 		</div>
-		<!-- copyright -->
+				<!-- copyright -->
+		<apimsg ref="extern"></apimsg>
 		<div class="w3copyright-agile">
 			<p>Wellcheck© 2019. All Rights Reserved.</p>
 		</div>
@@ -60,5 +59,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</ul>
 	</div>
 	<!-- //main -->
+	<script src="./js/conf.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+	<script src="./js/common.js"></script>
+  <script src="./js/register.js"></script>
 </body>
 </html>
