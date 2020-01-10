@@ -8,7 +8,7 @@ let vm = new Vue({
       conditions: false
     },
 
-    components: { apimsg },
+    components: { msg },
 
     methods:{
        register: function() {

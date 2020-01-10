@@ -7,7 +7,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!DOCTYPE html>
 <html>
 <head>
-<title>Login - Wellcheck</title>
+<title>Map - Wellcheck</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="" />
@@ -21,34 +21,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 </head>
 <body>
 	<!-- main -->
-	<div id="login" class="main-w3layouts wrapper">
-		<img class="img-fluid" src="imgs/logo_v2.png" alt="">
-		<div class="main-agileinfo">
-			<div class="agileits-top">
-					<input class="text email" type="email" name="email" v-model="email" placeholder="Email" required="">
-					<input class="text" type="password" name="password" v-model="password1" placeholder="Password" required="">
-					<input type="submit" value="SIGN IN" v-on:click="login">
-				<p>Don't have an account ? <a href="./index.html"> Register Now!</a></p>
-			</div>
-		</div>
-		<!-- copyright -->
-		<msg ref="extern"></msg>
-		<div class="w3copyright-agile">
-			<p>Wellcheck© 2019. All Rights Reserved.</p>
-		</div>
-		<!-- //copyright -->
-		<ul class="w3lsg-bubbles">
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-			<li></li>
-		</ul>
+  <div id="profil" style="" class="main-w3layouts wrapper">
+		<leftnav ref="nav"></leftnav>
+		<mod ref="modal"></mod>
+		<div ref="main" id='vuemap' class="main"></div>
+		<apimsg ref="extern"></apimsg>
 	</div>
 	<!-- //main -->
 	<script src="./js/conf.js"></script>
@@ -58,6 +35,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<script src="./js/commons/location.js"></script>
 	<script src="./js/commons/cred.js"></script>
 	<script src="./js/commons/user.js"></script>
-  <script src="./js/login/login.js"></script>
+	<script src="./js/commons/comp_modale.js"></script>
+	<script src="./js/commons/comp_nav.js"></script>
+	<script src="./js/profil/profil.js"></script>
 </body>
 </html>

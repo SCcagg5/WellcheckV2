@@ -6,7 +6,7 @@ let vm = new Vue({
       email: localStorage.email,
     },
 
-    components: { apimsg },
+    components: { msg },
 
     methods:{
        login: function() {

@@ -1,15 +1,12 @@
-
 let mod = {
   data: function() {
     return {
       type: 'hide',
       open: false,
       name: null,
-      element: {},
       comp: null
     }
   },
-  components: {compPoints, compShare},
   methods: {
     changeopen: function(name) {
       if (name == this.name || this.name == null) {
@@ -46,7 +43,7 @@ let mod = {
   <div class='back' :class='type' v-on:click=close>
     <div class='base'>
       <div class='title-base'>
-        {{ this.name }}
+         {{ this.name }}
       </div>
       <component v-bind:is=this.comp></component>
     </div>

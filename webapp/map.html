@@ -22,11 +22,9 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <body>
 	<!-- main -->
 	<div id="map" style="" class="main-w3layouts wrapper">
-
 		<leftnav ref="nav"></leftnav>
 		<mod ref="modal"></mod>
-		<div ref="main" id='vuemap' class="map">
-	  </div>
+		<div ref="main" id='vuemap' class="main"></div>
 		<apimsg ref="extern"></apimsg>
 	</div>
 	<!-- //main -->
@@ -65,9 +63,14 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<script src="./js/conf.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
-	<script src="./js/comp_map.js"></script>
-	<script src="./js/modale.js"></script>
-	<script src="./js/common.js"></script>
-	<script src="./js/map.js"></script>
+	<script src="./js/commons/comp_messages.js"></script>
+	<script src="./js/commons/location.js"></script>
+	<script src="./js/commons/cred.js"></script>
+	<script src="./js/commons/user.js"></script>
+	<script src="./js/map/comp_points.js"></script>
+	<script src="./js/map/comp_share.js"></script>
+	<script src="./js/commons/comp_modale.js"></script>
+	<script src="./js/commons/comp_nav.js"></script>
+	<script src="./js/map/map.js"></script>
 </body>
 </html>

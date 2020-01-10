@@ -1,11 +1,12 @@
+
 let vm = new Vue({
-    el: '#map',
+    el: '#profil',
 
     data: {
       email: localStorage.email,
     },
 
-    components: {apimsg, leftnav, mod},
+    components: {msg, leftnav, mod},
 
     methods:{
    },
