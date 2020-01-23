@@ -1,5 +1,5 @@
-Vue.component('compPoints', compPoints);
-Vue.component('compShare', compShare);
+Vue.component('compModPoints', compModPoints);
+Vue.component('compModShare', compModShare);
 
 let vm = new Vue({
     el: '#map',

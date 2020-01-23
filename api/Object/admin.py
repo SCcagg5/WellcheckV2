@@ -8,7 +8,7 @@ class admin:
         secret =  password + "kjb3qrbouwabO_)Oiqen123fgo9ubQP3BRTKQbgcoinQO&*"
         exp = datetime.datetime.utcnow() + datetime.timedelta(hours=48)
         ret = jwt.encode({'exp': exp, 'password': hash(str(secret + "1"))}, secret).decode('utf-8')
-        return [True, {'exp': str(exp), "adm_token": str(ret)}, None, {"adm_token": str(ret)}]
+        return [True, {'exp': str(exp), "admtoken": str(ret)}, None, {"admtoken": str(ret)}]
 
     def verify(token):
         secret =  "982qfgn013fIUkjb3qrbouwabO_)Oiqen123fgo9ubQP3BRTKQbgcoinQO&*"
@@ -19,7 +19,7 @@ class admin:
         except jwt.ExpiredSignature:
             return [False, "Signature expired", 403]
         except:
-            return  [False, "Invalid adm_token", 403]
+            return  [False, "Invalid admtoken", 403]
         return [True, {}, None]
 
     def all_user():

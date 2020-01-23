@@ -2,7 +2,7 @@ let cred = {
   methods: {
     usr_cred: function() {
       let actual = window.location.href.split(address)[1]
-      if (localStorage.usr_token && this.checktime("usr_token")) {
+      if (localStorage.usrtoken && this.checktime("usrtoken")) {
         let location = localStorage.location ?  localStorage.location  : redirect;
         loc.methods.redirect(location);
       } else {
@@ -11,8 +11,8 @@ let cred = {
       }
     },
 
-    api_cred: function() {
-      if (localStorage.api_token && this.checktime("api_token"))
+    api_cred: function(force = false) {
+      if (!force && localStorage.api_token && this.checktime("api_token"))
         return;
       this.ajaxRequest = true;
       data = {
@@ -47,8 +47,8 @@ let cred = {
        res = {}
        this.api_cred();
        res["token"] = localStorage.api_token;
-       if (localStorage.usr_token && this.checktime("usr_token"))
-         res["usr_token"] = localStorage.usr_token;
+       if (localStorage["usrtoken"] && this.checktime("usrtoken"))
+         res["usrtoken"] = localStorage["usrtoken"];
        return res;
      }
    }

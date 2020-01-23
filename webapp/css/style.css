@@ -660,12 +660,25 @@ input.text {
 
 .message {
 	padding: 10px;
-	width: 300px;
-	height: 20px;
+	width: 322px;
+	height: 45px;
 	margin-left: calc(50% - 161px);
 	border-radius: 7px;
 	color: white;
 	z-index: 8;
+
+}
+
+.smooth {
+	-webkit-animation: fadeinout 1s linear forwards;
+	animation: fadeinout 1s linear forwards;
+	opacity: 0;
+}
+
+.smooth2 {
+	-webkit-animation: fadeinout .2s linear forwards;
+	animation: fadeinout .2s linear forwards;
+	opacity: 0;
 }
 
 .error {
@@ -683,17 +696,18 @@ input.text {
 }
 
 .cross {
-	font-size: 14px;
-	border-radius: 50%;
-	width: 18px;
-	height: 18px;
-	padding-left: 1px;
-	padding-bottom: 2px;
-	position: relative;
-	left: 292px;
-	border: 1px solid white;
-	bottom: 32px;
-	cursor: pointer;
+		font-size: 8px;
+    border-radius: 50%;
+    width: 16px;
+    height: 15px;
+    padding-right: 1px;
+    padding-left: 2px;
+    padding-bottom: 3px;
+    position: relative;
+    left: 295px;
+    border: 1px solid white;
+    bottom: 36px;
+    cursor: pointer;
 }
 
 
@@ -706,9 +720,11 @@ input.text {
 	background-color: rgb(246, 245, 247);
 	color: rgb(74, 79, 98);
 	text-align: center;
-	-webkit-transition: width 1s, height 0s; /* For Safari 3.1 to 6.0 */
-  transition: width 1s, height 0s;
-	border-right: 2px solid #1C94FE;
+	-webkit-transition: margin-left 0.5s ease-in-out; /* For Safari 3.1 to 6.0 */
+  transition: margin-left 0.5s ease-in-out;
+	border-right: 1px solid rgba(226, 225, 227, 0.6);
+	box-shadow: 0px 3px 10px 3px rgba(226, 225, 227, 0.5);
+	width: 200px;
 }
 
 .nav-active {
@@ -761,11 +777,12 @@ input.text {
 
 
 .open {
-	width: 200px;
+
 }
 
 .close {
-	width: 5px;
+
+	margin-left: -200px;
 }
 
 .in-nav {
@@ -801,14 +818,15 @@ input.text {
 	height: 30px;
 	max-width: 40px;
 	position: absolute;
-	right: -56px;
-	top: 2px;
+	right: -36px;
+	top: 5px;
 	transition: 0.2s;
 	cursor: pointer;
 	background-color: white;
 	border-radius: 7px;
-	padding: 10px;
+	padding: 3px;
 	border: 1.5px solid #1C94FE;
+	opacity: 1;
 }
 
 .menu-open:hover {
@@ -818,7 +836,7 @@ input.text {
 .menu-close:hover {
 	width: 40px;
 	height: 40px;
-	right: -66px;
+	right: -46px;
 }
 
 .close .overflow {
@@ -830,6 +848,7 @@ input.text {
 	height: 100vh;
 	overflow: hidden;
 	margin-left: 0px;
+	background-color:rgb(255, 255, 255);
 }
 
 .blur {
@@ -882,19 +901,30 @@ input.text {
 	margin-left: 0px;
 	background-color: rgba(20, 20, 20, .2);
 	z-index: 2;
+	opacity: 1;
 	transition: opacity 0.5s ease-out;
 }
 
+@keyframes fadeinout {
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 
 .hide {
-	transition: opacity 0.5s ease-out;
-	opacity: 0;
 	height: 0;
 	overflow: hidden;
+	transition: opacity 0.5s ease-out;
+	opacity: 0;
 }
 
+
+
 .base {
-	background-color: rgb(246, 245, 247);
+	background-color: rgb(255, 255, 255);
 	width: 700px;
 	max-width: 100%;
 	height: 600px;
@@ -912,6 +942,19 @@ input.text {
 	margin-bottom: 5px;
 }
 
+.errdiv {
+		position: absolute;
+    z-index: 10;
+    top: calc(85vh - 42px);
+		width: 100%;
+		margin-left: 0px;
+	}
+
+.usualcenter {
+		width: calc(100% - 201px);
+		margin-left: 201px;
+	}
+
 @media(max-width:900px){
 	.back {
 		z-index: 5;
@@ -921,6 +964,11 @@ input.text {
 		height: 700px;
 		margin-left: calc(50% - 350px);
 		margin-top: calc(50vh - 450px);
+	}
+
+	.usualcenter {
+		width: 100%;
+		margin-left: 0px;
 	}
 }
 
@@ -936,7 +984,13 @@ input.text {
 	}
 }
 
-@media(max-height:710px){
+@media(max-height:610px){
+	.base {
+		margin-top: 5px;;
+	}
+}
+
+@media(max-height:600px){
 	.base {
 		margin-top: 0px;;
 	}
@@ -949,4 +1003,221 @@ input.text {
 		margin-top: 0px;
 		border-radius: 0px;
 	}
+}
+
+
+#errorProgress {
+  width: 322px;
+	margin-left: -11px;
+	margin-top: -11px;
+	border-radius: 0px 0px 7px 7px;
+	overflow: hidden;
+}
+
+#errorBar {
+	  width: 0%;
+	  height: 6px;
+		background-color: green;
+	}
+
+
+.infos {
+	width: calc(100% - 240px);
+	margin-left: 220px;
+	margin-top: 20px;
+	padding: 20px;
+}
+
+.cont {
+	background-color: rgb(255, 255, 255);
+	border: 1px solid rgb(216, 215, 217);
+	width: 100%;
+	border-radius: 7px;
+	min-height: 200px;
+	text-align: center;
+	color: rgb(74, 79, 98);
+	padding: 20px;
+	transition: .1s;
+}
+
+.cont-hover {}
+.cont-hover:hover {
+	box-shadow: 0px 3px 10px 3px rgba(226, 225, 227, 0.5);
+	border: 1px solid rgb(28, 148, 254);
+}
+
+.title-cont{
+		margin-top: -14px;
+	  margin-bottom: 15px;
+	  font-size: 1.4rem;
+		color: #211267;
+}
+
+.note-cont {
+    fill: rgb(178, 182, 195);
+    vertical-align: middle;
+    height: 16px;
+    width: 16px;
+    min-width: 16px;
+    min-height: 16px;
+}
+
+.note-cont:hover::after {
+	width: 200px;
+	height: 200px;
+	background-color: red;
+}
+
+@media(max-width:700px){
+	.infos {
+			width: calc(100% - 0px);
+			margin-left: 0px;
+	}
+
+	.cont {
+		min-height: 0px;
+	}
+
+	.main {
+		overflow-y: scroll;
+	}
+
+}
+
+
+.wc-button {
+	background-image: -webkit-linear-gradient(0deg, #1C94FE 0%, #38eaf9 100%);
+	background-image: -ms-linear-gradient(0deg, #1C94FE 0%, #38eaf9 100%);
+	font-size: 18px;
+	color: #fff;
+	border-radius: 7px;
+	padding: 3px 7px;
+	display: inline-block;
+	text-transform: uppercase;
+	padding-right: 5px;
+	width: 107px;
+	text-decoration: none !important;
+	cursor: pointer;
+}
+
+
+.note {
+	display: inline-block;
+	margin-top: -21px;
+}
+
+.notetext {
+  visibility: hidden;
+	background-color: rgba(20, 20, 20, .85);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 10;
+  font-size: 12px;
+  padding: 3px;
+  display: block;
+  margin-left: 12px;
+  margin-top: -12px;
+}
+
+.notewarning {
+	margin-left: -4px;
+	margin-top: -14px;
+	}
+
+.note:hover .notetext {
+  visibility: visible;
+}
+
+.warning {
+		fill: rgb(239, 87, 116);
+    vertical-align: middle;
+    height: 16px;
+    width: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    background-color: white;
+    margin: auto 0px;
+		margin-top: -5px;
+		margin-left: -16px;
+}
+
+.modalecross {
+	margin-left: calc(100% - 35px);
+margin-top: -37px;
+position: static;
+margin-bottom: 37px;
+font-size: 21px;
+}
+
+.margin5px {
+	margin-top: 5px;
+}
+
+.compinput {
+	color: rgb(74, 79, 98) !important;
+	border: .5px solid rgb(216, 215, 217) !important;
+	text-align: center;
+	caret-color: rgb(28, 148, 254);
+}
+
+.compinput:focus {
+	box-shadow: 0px 3px 10px 3px rgba(226, 225, 227, 0.5) !important;
+	border: .5px solid rgb(28, 148, 254) !important;
+	color: rgb(28, 148, 254) !important;
+}
+
+.compinput:hover {
+	box-shadow: 0px 3px 10px 3px rgba(226, 225, 227, 0.5) !important;
+	border: .5px solid rgb(28, 148, 254) !important;
+}
+
+.sepinput {
+	height: 20px;
+	width: 100%;
+}
+
+.hidesm {
+	display: block;
+}
+
+@media(max-width:768px){
+	.hidemd {
+		display: none;
+	}
+
+	.intersepinput {
+		height: 20px;
+		width: 100%;
+	}
+}
+
+@media(max-width:575px){
+	.hidemd {
+		display: block;
+	}
+	.hidesm {
+		display: none;
+	}
+	.intersepinput {
+		height: 10px;
+		width: 100%;
+	}
+	.sepinput {
+		height: 10px;
+		width: 100%;
+	}
+}
+
+#vueprofile {
+	overflow-y: scroll;
+}
+
+.insidecomp {
+	margin-top: 60px;
+}
+
+.softtext {
+	color: rgba(74, 79, 98, 0.7) !important;
 }

@@ -1,7 +1,7 @@
-let compShare = {
+let compModPoints = {
   data: function() {
     return {
-      test: 'share'
+      test: 'points'
     }
   },
   methods:{},

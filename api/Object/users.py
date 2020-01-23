@@ -15,7 +15,7 @@ class user:
         secret =  self.__getsecret()
         exp = datetime.datetime.utcnow() + datetime.timedelta(hours=48)
         ret = jwt.encode({'exp': exp, 'id': id, 'password': hash(str(id) + str(secret))}, secret).decode('utf-8')
-        return [True, {'exp': str(exp), "usr_token": str(ret)}, None, {"usr_token": str(ret)}]
+        return [True, {'exp': str(exp), "usrtoken": str(ret)}, None, {"usrtoken": str(ret)}]
 
     def verify(self, token, id = None):
         secret = self.__getsecret()
@@ -28,7 +28,7 @@ class user:
         except jwt.ExpiredSignature:
             return [False, "Signature expired", 403]
         except:
-            return  [False, "Invalid usr_token", 403]
+            return  [False, "Invalid usrtoken", 403]
         return [True, {}, None]
 
     def register(self, email, pass1, pass2, role = 0):

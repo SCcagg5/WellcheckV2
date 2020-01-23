@@ -23,6 +23,11 @@
   gtag('js', new Date());
 
   gtag('config', 'UA-154947792-1');
+
+  function changefile(file){
+    document.getElementById('viewer').data = file;
+    document.getElementById('link').href = file;
+  }
 </script>
 
 </head>
@@ -33,7 +38,13 @@
                 class="bar1"></span> <span class="bar2"></span> <span class="bar3"></span></button>
         <div id="my-nav" class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><select name="doc" class="nav-select" onchange="console.log(this.options[this.selectedIndex].value)"><option value="" class="opt" selected>Presentations</option><option value="pdfs\Wellcheck_072019.pdf" class="opt">July 2019</option></select></li>
+                <li class="nav-item">
+                  <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
+                    <option value="pdfs\Wellcheck_012020.pdf" class="opt" selected>Presentations</option>
+                    <option value="pdfs\Wellcheck_012020.pdf" class="opt">[FR] January 2020</option>
+                    <option value="pdfs\Wellcheck_072019.pdf" class="opt">[ENG] July 2019</option>
+                  </select>
+                </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <a href="https://dashboard.wellcheck.fr#view=Fit" class="btn btn-outline-dark my-2 my-sm-0 mr-3 text-uppercase">Early acces</a>
@@ -41,9 +52,9 @@
         </div>
     </div>
 </nav>
-<object id="viewer" data="pdfs\Wellcheck_072019.pdf" type="application/pdf" class="pdf">
+<object id="viewer" data="pdfs\Wellcheck_012020.pdf" type="application/pdf" class="pdf">
   <p>Your web browser doesn't have a PDF plugin.
-  Instead you can <a href="pdfs\Wellcheck_072019.pdf">click here to
+  Instead you can <a id='link' href="pdfs\Wellcheck_012020.pdf">click here to
   download the PDF file.</a></p>
 </object>
 <footer class="container-fluid" id="gtco-footer">

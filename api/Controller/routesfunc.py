@@ -47,13 +47,13 @@ def signin(cn, nextc):
     return cn.call_next(nextc, err)
 
 def authuser(cn, nextc):
-    err = check.contain(cn.hd, ["usr_token"], "HEAD")
+    err = check.contain(cn.hd, ["usrtoken"], "HEAD")
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.hd = err[1]
 
     use = user()
-    err = use.verify(cn.hd["usr_token"])
+    err = use.verify(cn.hd["usrtoken"])
     cn.private["user"] = use
 
     return cn.call_next(nextc, err)
@@ -186,12 +186,12 @@ def admtoken(cn, nextc):
 
 
 def authadmin(cn, nextc):
-    err = check.contain(cn.hd, ["adm_token"], "HEAD")
+    err = check.contain(cn.hd, ["admtoken"], "HEAD")
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.hd = err[1]
 
-    err = admin.verify(cn.hd["adm_token"])
+    err = admin.verify(cn.hd["admtoken"])
     return cn.call_next(nextc, err)
 
 def all_users(cn, nextc):

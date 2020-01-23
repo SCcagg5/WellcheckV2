@@ -1,4 +1,3 @@
-
 let leftnav = {
   data: function() {
     return {
@@ -88,7 +87,7 @@ let leftnav = {
                   <img class="img-nav" src="imgs/logo_v2.png" alt="">
                   <p>{{ email }}</p>
                   <div class="sep"></div>
-                  <div ref="link1" class="nav-text"  v-on:click="redirect('/profil')"         >Mon profil</div>
+                  <div ref="link1" class="nav-text"  v-on:click="redirect('/profile')"         >Your profile</div>
                   <div ref="link2" class="nav-text nav-second" v-on:click="modale('Billing')"   >Billing</div>
                   <div ref="link3" class="nav-text nav-second" v-on:click="modale('Invoices')"  >Invoices</div>
                   <div ref="link4" class="nav-text"  v-on:click="redirect('/map')"            >Map</div>

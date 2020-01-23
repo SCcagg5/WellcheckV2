@@ -6,7 +6,7 @@ let user = {
       localStorage.email = data.data["email"];
       axios.post(url, data.data, { headers: data.headers})
         .then(response => vm.$refs.extern.check(response.data, this.storecred))
-        .catch(error => console.log(error));
+        .catch(error => this.error(error));
 
     },
 
@@ -16,20 +16,51 @@ let user = {
       localStorage.email = data.data["email"];
       axios.post(url, data.data, { headers: data.headers})
         .then(response => vm.$refs.extern.check(response.data, this.storecred))
-        .catch(error => console.log(error));
+        .catch(error => this.error(error));
+    },
+
+    retrieve: function(route, headers, callback) {
+      url = method + "://" + api + '/' + route + '/';
+      this.callapi(url, {headers: headers}, callback, 'GET')
+    },
+
+    send: function(route, data, callback){
+      url = method + "://" + api + '/' + route + '/';
+      this.callapi(url, data, callback, 'POST')
+    },
+
+    callapi: function(url, data, callback, req_method = 'GET'){
+      this.ajaxRequest = true;
+      if (req_method = 'GET') {
+        axios.get(url, { headers: data.headers})
+          .then(response => this.relay(response.data, callback, false))
+          .catch(error => this.error(error));
+      } else {
+        axios.post(url, data.data, { headers: data.headers})
+          .then(response => this.relay(response.data, callback, false))
+          .catch(error => this.error(error));
+      }
     },
 
     logout: function() {
-      localStorage.removeItem("usr_token");
-      localStorage.removeItem("usr_token_exp");
+      localStorage.removeItem("usrtoken");
+      localStorage.removeItem("usrtoken_exp");
       cred.methods.usr_cred();
     },
 
+    relay: function(data, callback, redirect, message = false) {
+      vm.$refs.extern.check(data, callback, redirect, message)
+    },
+
+    error: function(error) {
+      vm.$refs.extern.set(String(error), "error")
+    },
+
     storecred: function(data) {
-      localStorage.usr_token = data.token;
-      localStorage.usr_token_exp = cred.methods.time(data.exp);
+      localStorage.usrtoken = data['usrtoken'];
+      localStorage.usrtoken_exp = cred.methods.time(data.exp);
       let location = localStorage.location ?  localStorage.location  : redirect;
       loc.methods.redirect(location);
-    }
+    },
   }
 }
