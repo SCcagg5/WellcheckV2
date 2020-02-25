@@ -139,7 +139,7 @@ services:
         - 8080:443
       volumes:
         - /srv/nginx/data/certs:/etc/nginx/certs:ro
-        - ./nginx/conf/:/etc/nginx/conf.d
+        - ./nginx/conf/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
         - ./nginx/vhost/:/etc/nginx/vhost.d
         - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/tmp/docker.sock:ro

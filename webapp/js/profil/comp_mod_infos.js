@@ -33,27 +33,62 @@ let compModInfos = {
   },
 
   methods: {
+    store: function(data){
+      this.data.phone = data['phone'];
+      this.data.lastname = data['lastname']
+      this.data.firstname = data['firstname']
+      this.phonemask()
+      this.$parent.$parent.infos()
+      this.$parent.close()
+    },
+
     update: function(){
       let data = {}
       data['headers'] = cred.methods.get_headers()
       data['data'] = {
-        'firstname': this.data.firstname,
-        'lastname': this.data.lastname,
-        'phone': this.data.phone
+        'firstname': this.data.firstname != void 0 ? this.data.firstname : "",
+        'lastname': this.data.lastname != void 0 ? this.data.lastname : "",
+        'phone': this.data.phone != void 0 ? this.data.phone : ""
       }
-      user.methods.retrieve('infos', headers, this.store);
+      user.methods.send('updateinfos', data, this.store);
     },
-    pad: function(num, size) {
-      var s = "000000000" + num;
-      return s.substr(s.length-size);
-    },
-    phonemask: function(){
-      let data = document.getElementById('phone').value
-      data = data.replace(/[^0-9]/g, '');
-      data.padEnd(10, '');
+
+    phonemask: function(data = null){
+      if (data == void 0)
+      {
+        data = document.getElementById('phone').value
+      }
+      data = data.replace(/[^0-9+]/g, '');
+      data.padEnd(14, '');
       if (data.charAt(0) == '+') {
-        console.log("2145".replace(/^(\d{2})(\d{2}).*/, '$&-$&-$&'));
+        let length = Math.ceil(data.length) - 2;
+        if (length > 11) {
+          data = data.substring(0, 12);
+          length = 10;
+        } else if (length == -1) {
+          this.data.phone = '';
+          return;
+        }
+        let maskreg = [
+                   ['+$1',                /^[+](\d{1}).*/],
+                   ['+$1',                /^[+](\d{2}).*/],
+                   ['+$1-$2',             /^[+](\d{2})(\d{1}).*/],
+                   ['+$1-$2-$3',          /^[+](\d{2})(\d{1})(\d{1}).*/],
+                   ['+$1-$2-$3',          /^[+](\d{2})(\d{1})(\d{2}).*/],
+                   ['+$1-$2-$3-$4',       /^[+](\d{2})(\d{1})(\d{2})(\d{1}).*/],
+                   ['+$1-$2-$3-$4',       /^[+](\d{2})(\d{1})(\d{2})(\d{2}).*/],
+                   ['+$1-$2-$3-$4-$5',    /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{1}).*/],
+                   ['+$1-$2-$3-$4-$5',    /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2}).*/],
+                   ['+$1-$2-$3-$4-$5-$6', /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{1}).*/],
+                   ['+$1-$2-$3-$4-$5-$6', /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2}).*/]
+                 ]
+        let mask = maskreg[length][0];
+        let reg = maskreg[length][1];console.log(mask, reg, length);
+        this.data.phone = data.replace(reg, mask).substring(0, mask.length);
+        document.getElementById('phone').value = this.data.phone
+          return this.data.phone
       } else {
+        console.log('else')
         let length = Math.ceil(data.length) - 1;
         if (length > 9) {
           data = data.substring(0, 10);
@@ -81,9 +116,11 @@ let compModInfos = {
           this.data.phone.substring(0, 13);
         }
         document.getElementById('phone').value = this.data.phone
+        return this.data.phone
         }
       }
   },
+
 
 
   template: `
@@ -135,7 +172,7 @@ let compModInfos = {
                 <div class="row">
                 <div class="hidemd col-sm-12 col-4 margin5px" for="phone">Phone </div>
                 <div class="col-md-3 hidesm"></div>
-                <input @keyup="phonemask()" class="form-control compinput col-md-6  col-sm-12 col-8" id="phone"  type="text" placeholder="Phone number" :value=this.data.phone>
+                <input @keyup="phonemask()" class="form-control compinput col-md-6  col-sm-12 col-8" id="phone"  type="text" placeholder="Phone number" :value=this.data.phone >
                 </div>
               </div>
             </div>
@@ -143,7 +180,7 @@ let compModInfos = {
         </div>
       </form>
       <br><br>
-      <div class="wc-button" v-on:click="updatevis()"> update </div>
+      <div class="wc-button" v-on:click="update()"> update </div>
     </div>
   `
 }

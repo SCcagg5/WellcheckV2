@@ -703,7 +703,6 @@ input.text {
     padding-right: 1px;
     padding-left: 2px;
     padding-bottom: 3px;
-    position: relative;
     left: 295px;
     border: 1px solid white;
     bottom: 36px;
@@ -1182,6 +1181,12 @@ font-size: 21px;
 	display: block;
 }
 
+.modalelist {
+	overflow-y: scroll;
+	 height: 200px;
+	 margin-left: 15px;
+}
+
 @media(max-width:768px){
 	.hidemd {
 		display: none;
@@ -1208,6 +1213,23 @@ font-size: 21px;
 		height: 10px;
 		width: 100%;
 	}
+
+	.modalelist {
+		height: auto;
+		max-height: 500px;
+	}
+
+	@media(max-height:610px){
+		.modalelist {
+			max-height: 300px;
+		}
+	}
+
+	@media(max-height:700px){
+		.modalelist {
+			max-height: 450px;
+		}
+	}
 }
 
 #vueprofile {
@@ -1220,4 +1242,41 @@ font-size: 21px;
 
 .softtext {
 	color: rgba(74, 79, 98, 0.7) !important;
+}
+
+.StripeElement {
+  box-sizing: border-box;
+
+  height: 40px;
+
+  padding: 10px 12px;
+
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color: white;
+
+  box-shadow: 0 1px 3px 0 #e6ebf1;
+  -webkit-transition: box-shadow 150ms ease;
+  transition: box-shadow 150ms ease;
+}
+
+.StripeElement--focus {
+  box-shadow: 0 1px 3px 0 #cfd7df;
+}
+
+.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.StripeElement--webkit-autofill {
+  background-color: #fefde5 !important;
+}
+
+.deletecard {
+	margin-top: 5px;
+	border: 0px;
+}
+
+.deletecard:hover {
+	color:red;
 }

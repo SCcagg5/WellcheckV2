@@ -19,7 +19,8 @@ let mod = {
         this.change()
       }
       if (this.open)
-        this.name = name;
+        this.name = name
+        console.log('compMod' + name)
         this.comp = 'compMod' + name;
 
     },

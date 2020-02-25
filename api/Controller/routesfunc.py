@@ -4,6 +4,7 @@ from Object.tpe import tpe
 from Object.order import order
 from Object.calc import sim
 from Object.admin import admin
+from Object.floteur import floteur
 import json
 
 def getauth(cn, nextc):
@@ -173,6 +174,36 @@ def emulate(cn, nextc):
     cn.pr = err[1]
 
     err = sim.calc()
+    return cn.call_next(nextc, err)
+
+def point_add(cn, nextc):
+    err = check.contain(cn.pr, ["id_sig"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+
+    use = floteur(cn.private["user"].id)
+    err = use.add(cn.pr["id_sig"])
+    return cn.call_next(nextc, err)
+
+def point_share(cn, nextc):
+    err = check.contain(cn.pr, ["id_points", "email"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+
+    use = floteur(cn.private["user"].id)
+    err = use.share(cn.pr["id_points"], cn.pr["email"])
+    return cn.call_next(nextc, err)
+
+def point_rename(cn, nextc):
+    err = check.contain(cn.pr, ["id_point", "surname"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+
+    use = floteur(cn.private["user"].id)
+    err = use.rename(cn.pr["id_point"], cn.pr["surname"])
     return cn.call_next(nextc, err)
 
 def admtoken(cn, nextc):

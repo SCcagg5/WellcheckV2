@@ -31,7 +31,7 @@ let user = {
 
     callapi: function(url, data, callback, req_method = 'GET'){
       this.ajaxRequest = true;
-      if (req_method = 'GET') {
+      if (req_method == 'GET') {
         axios.get(url, { headers: data.headers})
           .then(response => this.relay(response.data, callback, false))
           .catch(error => this.error(error));

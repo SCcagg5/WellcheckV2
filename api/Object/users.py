@@ -3,6 +3,7 @@ import jwt
 import hashlib
 import time
 import os
+import re
 import phonenumbers
 from .sql import sql
 
@@ -28,14 +29,16 @@ class user:
         except jwt.ExpiredSignature:
             return [False, "Signature expired", 403]
         except:
-            return  [False, "Invalid usrtoken", 403]
+            return  [False, "Invalid usrtoken", 400]
         return [True, {}, None]
 
     def register(self, email, pass1, pass2, role = 0):
         if pass1 != pass2:
-            return [False, "Passwords do not match", 403]
+            return [False, "Passwords do not match", 400]
         if self.__exist(email):
-            return [False, "Email already in use", 403]
+            return [False, "Email already in use", 400]
+        if not self.__email(email):
+            return [False, "Invalid email", 400]
 
         password = self.__hash(email, pass1)
         date = str(int(round(time.time() * 1000)))
@@ -54,11 +57,12 @@ class user:
         return [False, "Invalid email or password", 403]
 
     def updetails(self, phone, fname, lname):
-        try:
-            phone = phonenumbers.format_number(phonenumbers.parse(str(phone), 'FR'),
-                                               phonenumbers.PhoneNumberFormat.INTERNATIONAL)
-        except phonenumbers.phonenumberutil.NumberParseException:
-            return [False, "Invalid phone number", 403]
+        if phone != "":
+            try:
+                phone = phonenumbers.format_number(phonenumbers.parse(str(phone), 'FR'),
+                                                   phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+            except phonenumbers.phonenumberutil.NumberParseException:
+                return [False, "Invalid phone number", 403]
         phone = phone.replace(" ", "")
 
         succes = sql.input("INSERT INTO `userdetails` (`id`, `user_id`, `fname`, `lname`, `phone`) \
@@ -109,3 +113,6 @@ class user:
 
     def __getid(self, id, idbis = None):
         return id if id != "-1" and id is not None else idbis if idbis is not None else self.id
+
+    def __email(self, email):
+        return re.match("[^@]+@[^@]+\.[^@]+", email)

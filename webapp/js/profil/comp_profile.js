@@ -140,8 +140,10 @@ let profile = {
                               <warning
                                 :display="(!infos && (data == void 0 ||
                                            data.lastname == void 0 ||
-                                           data.firstname == void 0))"
-                                note="This part of your profile is empty"
+                                           data.firstname == void 0 ||
+                                           data.lastname == '' ||
+                                           data.firstname == '' ))"
+                                note="This part of your profile not complete"
                               >
                               </warning>
                               name: {{data.lastname | upper | exist}} {{data.firstname | exist}}
@@ -156,7 +158,8 @@ let profile = {
                               <br>
                               <warning
                                 :display="(!infos && (data == void 0 ||
-                                           data.phone == void 0 ) )"
+                                           data.phone == void 0 ||
+                                           data.phone == '' ) )"
                                 note="This part of your profile is empty"
                               >
                               </warning>

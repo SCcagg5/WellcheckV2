@@ -19,7 +19,6 @@ let msg = {
       if (data.status != 200){
         if (data.error == 'Invalid token'){
           cred.methods.api_cred(true);
-          Location.reload()
         } else if (data.error == 'Invalid usrtoken') {
           user.methods.logout();
         }

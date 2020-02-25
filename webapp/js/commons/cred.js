@@ -26,6 +26,9 @@ let cred = {
                {
                  localStorage.api_token = response.data.data.token;
                  localStorage.api_token_exp = this.time(response.data.data.exp);
+                 if (force == true){
+                   document.location.reload(true)
+                 }
                }
              });
      },

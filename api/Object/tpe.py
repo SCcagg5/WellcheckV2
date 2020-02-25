@@ -16,7 +16,7 @@ class tpe:
             try:
                 customer = stripe.Customer.create(source=token, email=email)
             except:
-                return [False, "Invalid card token", 400]
+                return [False, "Invalid card token: " + token, 400]
             succes = sql.input("INSERT INTO `userstripes` (`id`, `user_id`, `stripe_id`) VALUES (NULL, %s, %s)", \
             (user_id, customer["id"]))
             if not succes:
