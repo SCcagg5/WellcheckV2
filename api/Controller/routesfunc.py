@@ -206,6 +206,27 @@ def point_rename(cn, nextc):
     err = use.rename(cn.pr["id_point"], cn.pr["surname"])
     return cn.call_next(nextc, err)
 
+def point_infos(cn, nextc):
+    cn.pr = check.setnoneopt(cn.pr, ["id_points", "period_start", "period_end", "longlat", "range"])
+    use = floteur(cn.private["user"].id)
+    err = use.infos(cn.pr["id_points"],
+                     cn.pr["period_start"],
+                     cn.pr["period_end"],
+                     cn.pr["longlat"],
+                     cn.pr["range"],
+                     )
+    return cn.call_next(nextc, err)
+
+def data_add(cn, nextc):
+    err = check.contain(cn.pr, ["data", "sig_id", "point_id"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+
+    use = floteur()
+    err = use.adddata(cn.pr["data"], cn.pr["sig_id"], cn.pr["point_id"])
+    return cn.call_next(nextc, err)
+
 def admtoken(cn, nextc):
     err = check.contain(cn.pr, ["password"])
     if not err[0]:
