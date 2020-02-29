@@ -26,7 +26,8 @@
 
   function changefile(file){
     document.getElementById('viewer').data = file;
-    document.getElementById('link').href = file;
+    document.getElementById('viewerlink').href = file;
+    PDFObject.embed(file, "#viewer2");
   }
 </script>
 
@@ -40,13 +41,13 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                   <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
-                    <option value="pdfs\Wellcheck_012020.pdf" class="opt" selected disabled>Presentations</option>
-                    <option value="pdfs\Wellcheck_012020.pdf" class="opt">[FR] January 2020</option>
-                    <option value="pdfs\Wellcheck_072019.pdf" class="opt">[ENG] July 2019</option>
+                    <option value="pdfs/Wellcheck_012020.pdf" class="opt" selected disabled>Presentations</option>
+                    <option value="pdfs/Wellcheck_012020.pdf" class="opt">[FR] January 2020</option>
+                    <option value="pdfs/Wellcheck_072019.pdf" class="opt">[ENG] July 2019</option>
                   </select>
                   <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
-                    <option value="pdfs\Wellcheck_arch_022020.pdf" class="opt" selected disabled>Technique</option>
-                    <option value="pdfs\Wellcheck_arch_022020.pdf" class="opt">[EN] February 2020</option>
+                    <option value="pdfs/Wellcheck_arch_022020.pdf" class="opt" selected disabled>Technique</option>
+                    <option value="pdfs/Wellcheck_arch_022020.pdf" class="opt">[EN] February 2020</option>
                   </select>
                 </li>
             </ul>
@@ -56,10 +57,10 @@
         </div>
     </div>
 </nav>
-<object id="viewer" data="pdfs\Wellcheck_012020.pdf" type="application/pdf" class="pdf">
-  <p style="text-align: center; background-color: rgb(255, 255, 255)">Your web browser doesn't have a PDF plugin.
-  Instead you can <a id='link' href="pdfs\Wellcheck_012020.pdf">click here to
-  download the PDF file.</a></p>
+<object id="viewer" data="pdfs/Wellcheck_012020.pdf" type="application/pdf" class="pdf">
+	<div id="viewer2" class="pdf"></div>
+	Woups, look like you can't read this document from your device<br>
+	Download it ! <a id="viewerlink" href="pdfs/Wellcheck_012020.pdf"> Here !</a>
 </object>
 <footer class="container-fluid" id="gtco-footer">
     <div class="container">
@@ -75,6 +76,8 @@
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <!-- owl carousel js-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.js"></script>
+<script>PDFObject.embed("pdfs/Wellcheck_012020.pdf", "#viewer2");</script>
 <script src="owl-carousel/owl.carousel.min.js"></script>
 <script src="js/main.js"></script>
 </body>
