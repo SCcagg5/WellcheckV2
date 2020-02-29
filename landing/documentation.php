@@ -40,9 +40,13 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                   <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
-                    <option value="pdfs\Wellcheck_012020.pdf" class="opt" selected>Presentations</option>
+                    <option value="pdfs\Wellcheck_012020.pdf" class="opt" selected disabled>Presentations</option>
                     <option value="pdfs\Wellcheck_012020.pdf" class="opt">[FR] January 2020</option>
                     <option value="pdfs\Wellcheck_072019.pdf" class="opt">[ENG] July 2019</option>
+                  </select>
+                  <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
+                    <option value="pdfs\Wellcheck_arch_022020.pdf" class="opt" selected disabled>Technique</option>
+                    <option value="pdfs\Wellcheck_arch_022020.pdf" class="opt">[EN] February 2020</option>
                   </select>
                 </li>
             </ul>
@@ -53,14 +57,14 @@
     </div>
 </nav>
 <object id="viewer" data="pdfs\Wellcheck_012020.pdf" type="application/pdf" class="pdf">
-  <p>Your web browser doesn't have a PDF plugin.
+  <p style="text-align: center; background-color: rgb(255, 255, 255)">Your web browser doesn't have a PDF plugin.
   Instead you can <a id='link' href="pdfs\Wellcheck_012020.pdf">click here to
   download the PDF file.</a></p>
 </object>
 <footer class="container-fluid" id="gtco-footer">
     <div class="container">
             <div class="col-12 text-center">
-                <p>Wellcheck&copy; 2019. All Rights Reserved.</p>
+                <p>Wellcheck&copy; 2020. All Rights Reserved.</p>
             </div>
     </div>
 </footer>

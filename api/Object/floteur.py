@@ -13,8 +13,9 @@ class floteur:
     def add(self, id_sig):
         number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s", (self.usr_id))[0][0]
         name = "point_" + str(number)
-        succes = sql.input("INSERT INTO `point` (`id`, `id_user`, `id_sig`, `name`, `surname`) VALUES (NULL, %s, %s, %s, %s)", \
-        (int(self.usr_id), id_sig, name, name))
+        date = str(int(round(time.time() * 1000)))
+        succes = sql.input("INSERT INTO `point` (`id`, `id_user`, `id_sig`, `name`, `surname`, `date`) VALUES (NULL, %s, %s, %s, %s, %s)", \
+        (int(self.usr_id), id_sig, name, name, date))
         if not succes:
             return [False, "data input error", 500]
         return [True, {}, None]
@@ -41,46 +42,74 @@ class floteur:
             return [False, "Id_points should be a list", 400]
         for id_point in id_points:
             if not self.__exist(id_point):
-                return [False, "Invalid point_id", 400]
+                return [False, "Invalid point_id: 'id_point'", 400]
             succes = False
             if self.__proprietary(id_point):
                 id_to = sql.get("SELECT id FROM `user` WHERE email = %s", (email))
                 if len(id_to) < 1:
-                    return [False, "Invalid email", 400]
+                    return [False, "Invalid email: 'id_point'", 400]
                 id_to = id_to[0]
                 if id_to != self.usr_id:
-                    return [False, "Can't share to yourself", 401]
+                    return [False, "Can't share to yourself: 'id_point'", 401]
+                if not self.__shared(id_point, id_to):
+                    return [False, "Already shared with: '"+ id_to +"'", 401]
                 date = str(int(round(time.time() * 1000)))
                 succes =  sql.input("INSERT INTO `point_shared` (`id`, `id_user`, `id_point`, `date`, `surname`) VALUES (NULL, %s, %s, %s, %s)", \
                 (id_to  , id_point, date, None))
             else:
-                return [False, "Invalid right", 403]
+                return [False, "Invalid right : 'id_point'", 403]
             if not succes:
                 return [False, "data input error", 500]
         return [True, {}, None]
 
-    def infos(self,
+    def infos_points(self,
               id_points = None,
               period_start = None,
               period_end = None,
               longlat = None,
-              range = None):
+              range = None,
+              limit = None):
         if period_end and period_start:
             if period_start > period_end:
                 return [False, "'period_start' should be before 'period_end'", 400]
         prop = self.__get_point("proprietary")
         shar = self.__get_point("shared")
         if id_points:
-            prop = list(set(prop).intersection(id_points))
-            shar = list(set(shar).intersection(id_points))
-        prop = es.search(body=self.__infos_query(prop, [], period_start, period_end))
-        shar = es.search(body=self.__infos_query(shar, [], period_start, period_end))
-        return [True, {"points": {"proprietary": prop, "shared": shar }}, None]
+             prop = list(set(prop).intersection(id_points))
+             shar = list(set(shar).intersection(id_points))
+        propdetail = self.__get_point("proprietary", details=True)
+        shardetail = self.__get_point("shared", details=True)
+        propdata = self.__infos_query(prop, period_start, period_end, limit)
+        shardata = self.__infos_query(shar, period_start, period_end, limit)
+        for i in propdetail:
+            propdetail[i]["data"] = propdata[i] if i in propdata else []
+        for i in shardetail:
+            shardetail[i]["data"] = shardata[i] if i in shardata else []
+        ret = {
+            "proprietary": [ v for v in propdetail.values() ],
+            "shared": [ v for v in shardetail.values() ]
+        }
+        return [True, {"points": ret}, None]
+
+    def infos_point(self, id_point, period_start, period_end, limit = 100000000):
+        if not self.__exist(id_point):
+            return [False, "Invalid point_id", 400]
+        succes = False
+        status = "proprietary" if self.__proprietary(id_point) else "shared" if self.__shared(id_point) else None
+        if not status:
+            return [False, "Invalid right", 403]
+        ret = self.__get_point(status, details=True)[id_point]
+        ret["data"] = self.__infos_query([id_point], period_start, period_end, limit)
+        return [True, res, None]
 
     def adddata(self, data, id_sig, id_point):
-        id_sig = __hash(id_sig)
-        id_point = __hash(id_point)
+        id_sig = self.__hash(id_sig)
+        id_point = id_point
         date = int(round(time.time() * 1000))
+        if "pos" not in data or not data["pos"]:
+            return [False, "Missing index 'pos' inside data", 400]
+        if "lon" not in data['pos'] or "lat" not in data['pos']:
+            return [False, "Missing inbex 'lon' or 'lat' inside data.pos", 400]
         input={
             "id_sig": id_sig,
             "id_point": id_point,
@@ -89,6 +118,8 @@ class floteur:
         }
         res = es.index(index='point_test',body=input)
         return [True, {"data_added": input}, None]
+
+
 
     def __exist(self, id_point):
         ret = False
@@ -102,44 +133,91 @@ class floteur:
             ret = True
         return ret
 
-    def __shared(self, id_point):
+    def __shared(self, id_point, id_user = None):
         ret = False
-        if sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s AND id_point = %s", (self.usr_id, id_point))[0][0] > 0:
+        if sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s AND id_point = %s", (id_user if id_user else self.usr_id, id_point))[0][0] > 0:
             ret = True
         return ret
 
-    def __get_point(self, type = "proprietary"):
+    def __get_point(self, type = "proprietary", details = False):
         res = []
         if type == "proprietary":
-            res = sql.get("SELECT id FROM `point` WHERE id_user = %s", (self.usr_id))
+            if details:
+                res = sql.get("SELECT `id`, `name`, `surname`, `date` FROM `point` WHERE id_user = %s", (self.usr_id))
+                ret = {}
+                for i in res:
+                    ret[str(i[0])] = {
+                            "id": i[0],
+                            "name": i[1],
+                            "surname": i[2],
+                            "date": i[3]
+                        }
+            else:
+                res = sql.get("SELECT id FROM `point` WHERE id_user = %s", (self.usr_id))
+                ret = []
+                for i in res:
+                    ret.append(i[0])
         elif type == "shared":
-            res = sql.get("SELECT id FROM `point_shared` WHERE id_user = %s", (self.usr_id))
-        ret = []
-        for i in res:
-            ret.append(i[0])
+            if details:
+                res = sql.get("SELECT point.id, point.name, point_shared.surname, point_shared.date FROM `point_shared` INNER JOIN `point` ON `id_point` = point.id WHERE point_shared.id_user = %s", (self.usr_id))
+                ret = {}
+                for i in res:
+                    ret[str(i[0])] = {
+                            "id": i[0],
+                            "name": i[1],
+                            "surname": i[2],
+                            "date": i[3]
+                        }
+            else:
+                res = sql.get("SELECT id FROM `point_shared` WHERE id_user = %s", (self.usr_id))
+                ret = []
+                for i in res:
+                    ret.append(i[0])
         return ret
 
-    def __infos_query(self, id_points, id_sigs, date_start = None, date_end = None):
-        query = {
-            	"sort": [ {"date": "desc"} ],
-            	"query": {"bool":{"must":[
-                            {"range":{"date":{}}},
-            				{"term":{ "_index":"point_test"}},
-            				{"bool":{ "should":[]}}
-            	 ]}}}
-        for id in id_points:
-            query["query"]["bool"]["must"][2]["bool"]["should"].append(
-                {"term":{"id_point": self.__hash(id)}}
-            )
-        for id in id_sigs:
-            query["query"]["bool"]["must"][2]["bool"]["should"].append(
-                {"term":{"id_sig": self.__hash(id)}}
-            )
+    def __infos_query(self, id_points, date_start = None, date_end = None, limit = None):
+        range = {"from": "0"}
         if date_start:
-            query["query"]["bool"]["must"][0]["range"]["date"]["gte"] = date_start
+            range["from"] = str(date_start)
         if date_end:
-            query["query"]["bool"]["must"][0]["range"]["date"]["gte"] = date_end
-        return query
+            range["to"] = str(date_end)
+        limit = limit if limit else 5
+        query = {
+          "size": 0,
+          "aggs" : {
+            "date_range" : {
+              "range" : { "field" : "date", "ranges" : [range]},
+              "aggs": {
+                "dedup" : {
+                  "filter": {"terms": {"id_point": id_points}},
+                      "aggs": {
+                        "dedup" : {
+                          "terms":{"field": "id_point.keyword"},
+                          "aggs": {
+                            "top_sales_hits": {
+                              "top_hits": {
+                                "sort": [{"date": {"order": "desc"}}],
+                                "_source": {"includes": [ "date", "data" ]},
+                                "size" : limit
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                }
+            }
+          }
+        }
+        res = es.search(body=query)
+        ret = {}
+        for i in res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]:
+            ret[i["key"]] = []
+            for i2 in i["top_sales_hits"]["hits"]["hits"]:
+                if "date" in i2["_source"]:
+                    i2["_source"]["date"] = str(i2["_source"]["date"])
+                ret[i["key"]].append(i2["_source"])
+        return ret
 
     def __hash(self, string):
         return  None if not string else hashlib.sha256(str(string).encode('utf-8')).hexdigest()

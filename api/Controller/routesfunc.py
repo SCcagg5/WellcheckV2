@@ -206,14 +206,25 @@ def point_rename(cn, nextc):
     err = use.rename(cn.pr["id_point"], cn.pr["surname"])
     return cn.call_next(nextc, err)
 
-def point_infos(cn, nextc):
-    cn.pr = check.setnoneopt(cn.pr, ["id_points", "period_start", "period_end", "longlat", "range"])
+def points_infos(cn, nextc):
+    cn.pr = check.setnoneopt(cn.pr, ["id_points", "period_start", "period_end", "longlat", "range", "limit"])
     use = floteur(cn.private["user"].id)
-    err = use.infos(cn.pr["id_points"],
+    err = use.infos_points(cn.pr["id_points"],
                      cn.pr["period_start"],
                      cn.pr["period_end"],
                      cn.pr["longlat"],
                      cn.pr["range"],
+                     cn.pr["limit"]
+                     )
+    return cn.call_next(nextc, err)
+
+def point_infos(cn, nextc):
+    cn.pr = check.setnoneopt(cn.pr, ["id_points", "period_start", "period_end", "limit"])
+    use = floteur(cn.private["user"].id)
+    err = use.infos_point(cn.pr["id_points"],
+                     cn.pr["period_start"],
+                     cn.pr["period_end"],
+                     cn.pr["limit"]
                      )
     return cn.call_next(nextc, err)
 
