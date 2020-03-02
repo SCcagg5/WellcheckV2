@@ -1,7 +1,7 @@
 version: '3'
 networks:
    back-net:
-     driver: bridge
+     internal: true
    proxy:
      driver: bridge
 
@@ -10,8 +10,6 @@ services:
      build: ./db
      container_name: datab
      restart: always
-     ports:
-       - 3306
      networks:
        - back-net
      volumes:
@@ -29,13 +27,11 @@ services:
       - bootstrap.memory_lock=false
       - cluster.routing.allocation.disk.threshold_enabled=false
       - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    ports:
-      - "9200:9200"
     volumes:
       - ./elastic_db:/usr/share/elasticsearch/data
     networks:
@@ -43,8 +39,6 @@ services:
 
    kibana:
     image: docker.elastic.co/kibana/kibana:7.6.0
-    ports:
-      - 5601
     networks:
       - back-net
       - proxy
@@ -58,7 +52,7 @@ services:
    bck-end:
      build: ./api
      container_name: bck-end
-     ports:
+     expose:
        - 8080
      tty: true
      stdin_open: true
@@ -83,8 +77,6 @@ services:
      environment:
        - PMA_ARBITRARY=1
      restart: always
-     ports:
-       - 80
      volumes:
        - /sessions
      depends_on:
@@ -104,11 +96,9 @@ services:
       image: nginx
       container_name: landing
       restart: always
-      ports:
-        - 80
       volumes:
-            - "./landing:/usr/share/nginx/html"
-            - "./conf/landing.conf:/etc/nginx/conf.d/default.conf:ro"
+        - ./landing:/usr/share/nginx/html:ro
+        - ./conf/landing.conf:/etc/nginx/conf.d/default.conf:ro
       links:
         - error
         - php
@@ -124,11 +114,9 @@ services:
       image: nginx
       container_name: webapp
       restart: always
-      ports:
-        - 80
       volumes:
-            - "./webapp:/usr/share/nginx/html"
-            - "./conf/webapp.conf:/etc/nginx/conf.d/default.conf:ro"
+        - ./webapp:/usr/share/nginx/html:ro
+        - ./conf/webapp.conf:/etc/nginx/conf.d/default.conf:ro
       links:
         - error
       networks:
@@ -143,7 +131,7 @@ services:
       image: php:fpm-alpine
       container_name: php
       volumes:
-          - "./landing:/script:ro"
+        - ./landing:/script:ro
       networks:
         - proxy
 
@@ -152,11 +140,9 @@ services:
       image: nginx
       container_name: error
       restart: always
-      ports:
-        - 80
       volumes:
-            - "./errorpages:/usr/share/nginx/html"
-            - "./conf/error.conf:/etc/nginx/conf.d/default.conf:ro"
+        - ./errorpages:/usr/share/nginx/html:ro
+        - ./conf/error.conf:/etc/nginx/conf.d/default.conf:ro
       networks:
         - proxy
 
@@ -171,11 +157,11 @@ services:
         - 443:443
       volumes:
         - /srv/nginx/data/certs:/etc/nginx/certs:ro
-        - ./nginx/conf/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
-        - ./nginx/vhost/:/etc/nginx/vhost.d
-        - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/tmp/docker.sock:ro
         - ./nginx/logs:/var/log/nginx/
+        - ./nginx/vhost/:/etc/nginx/vhost.d:ro
+        - ./nginx/conf/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+        - ./nginx/passwd:/srv/docker/nginx/htpasswd/:ro
       networks:
         - proxy
 

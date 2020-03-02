@@ -21,14 +21,21 @@
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'UA-154947792-1');
 
-  function changefile(file){
+  function changefile(file, update = true){
     document.getElementById('viewer').data = file;
     document.getElementById('viewerlink').href = file;
     PDFObject.embed(file, "#viewer2");
+    var list= document.getElementsByTagName("select");
+    for (var i = 0; i < list.length; i++) {
+       if (list[i].value != file){list[i].selectedIndex = 0;}
+    }
+    if (update) {
+    window.location.href = document.URL.split('#')[0] + '#' +file.split("pdfs/")[1].split(".pdf")[0];
+    }
   }
+
 </script>
 
 </head>
@@ -77,7 +84,23 @@
 <script src="js/bootstrap.min.js"></script>
 <!-- owl carousel js-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.js"></script>
-<script>PDFObject.embed("pdfs/Wellcheck_012020.pdf", "#viewer2");</script>
+<script>
+PDFObject.embed("pdfs/Wellcheck_012020.pdf", "#viewer2");
+var anchor = document.URL.split('#');
+if (anchor.length > 1) {
+	var arg = 'pdfs/' + anchor[1] + ".pdf";
+	var list= document.getElementsByTagName("select");
+  		for (var i = 0; i < list.length; i++) {
+     			for (var i2 = 0; i2 < list[i].length; i2++) {
+			if (!list[i][i2].disabled && list[i][i2].value == arg) {
+				list[i].value = arg;
+				changefile(arg, false);
+				list[i][i2].selected = true;
+			}
+		}
+  }
+}
+</script>
 <script src="owl-carousel/owl.carousel.min.js"></script>
 <script src="js/main.js"></script>
 </body>
