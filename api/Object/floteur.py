@@ -25,7 +25,7 @@ class floteur:
 
     def rename(self, id_point, surname):
         if not self.__exist(id_point):
-            return [False, "Invalid point_id", 400]
+            return [False, "Invalid point_id: '" + id_point + "'", 400]
         succes = False
         if self.__proprietary(id_point):
             succes = sql.input("UPDATE `point` SET surname = %s WHERE id = %s AND id_user = %s", (surname, id_point, self.usr_id))
@@ -42,7 +42,7 @@ class floteur:
             return [False, "Id_points should be a list", 400]
         for id_point in id_points:
             if not self.__exist(id_point):
-                return [False, "Invalid point_id: 'id_point'", 400]
+                return [False, "Invalid id_point: '" + id_point + "'", 400]
             succes = False
             if self.__proprietary(id_point):
                 id_to = sql.get("SELECT id FROM `user` WHERE email = %s", (email))
@@ -57,10 +57,23 @@ class floteur:
                 succes =  sql.input("INSERT INTO `point_shared` (`id`, `id_user`, `id_point`, `date`, `surname`) VALUES (NULL, %s, %s, %s, %s)", \
                 (id_to  , id_point, date, None))
             else:
-                return [False, "Invalid right : 'id_point'", 403]
+                return [False, "Invalid right : id_point : '" + id_point + "'", 403]
             if not succes:
                 return [False, "data input error", 500]
         return [True, {}, None]
+
+    def my_shares(self):
+        res = sql.get("SELECT point_shared.id_point, user.email, point_shared.date FROM point_shared INNER JOIN user ON point_shared.id_user = user.id INNER JOIN point ON point_shared.id_point = point.id WHERE point.id_user = %s", (self.usr_id))
+        ret = {}
+        for i in res:
+            index = str(i[0])
+            if index not in ret:
+                ret[index] = []
+            ret[index].append({
+                "email": i[1],
+                "date": i[2]
+            })
+        return [True, {"shares": ret} , None]
 
     def infos_points(self,
               id_points = None,
@@ -81,26 +94,28 @@ class floteur:
         shardetail = self.__get_point("shared", details=True)
         propdata = self.__infos_query(prop, period_start, period_end, limit)
         shardata = self.__infos_query(shar, period_start, period_end, limit)
-        for i in propdetail:
-            propdetail[i]["data"] = propdata[i] if i in propdata else []
-        for i in shardetail:
-            shardetail[i]["data"] = shardata[i] if i in shardata else []
         ret = {
-            "proprietary": [ v for v in propdetail.values() ],
-            "shared": [ v for v in shardetail.values() ]
+            "proprietary": [],
+            "shared": []
         }
+        for i in prop:
+             propdetail[str(i)]["data"] = propdata[str(i)] if str(i) in propdata else []
+             ret["proprietary"].append(propdetail[str(i)])
+        for i in shar:
+             shardetail[str(i)]["data"] = shardata[str(i)] if str(i) in shardata else []
+             ret["shared"].append(shardetail[str(i)])
         return [True, {"points": ret}, None]
 
     def infos_point(self, id_point, period_start, period_end, limit = 100000000):
         if not self.__exist(id_point):
-            return [False, "Invalid point_id", 400]
-        succes = False
+            return [False, "Invalid id_point: '" + id_point + "'", 400]
         status = "proprietary" if self.__proprietary(id_point) else "shared" if self.__shared(id_point) else None
         if not status:
             return [False, "Invalid right", 403]
-        ret = self.__get_point(status, details=True)[id_point]
-        ret["data"] = self.__infos_query([id_point], period_start, period_end, limit)
-        return [True, res, None]
+        ret = self.__get_point(status, details=True)[str(id_point)]
+        res = self.__infos_query([id_point], period_start, period_end, limit)
+        ret["data"] = res[str(id_point)] if str(id_point) in res else []
+        return [True, ret, None]
 
     def adddata(self, data, id_sig, id_point):
         id_sig = self.__hash(id_sig)
@@ -123,20 +138,29 @@ class floteur:
 
     def __exist(self, id_point):
         ret = False
-        if sql.get("SELECT COUNT(*) FROM `point` WHERE id = %s", (id_point))[0][0] > 0:
-            ret = True
+        try:
+            if sql.get("SELECT COUNT(*) FROM `point` WHERE id = %s", (id_point))[0][0] > 0:
+                ret = True
+        except:
+            ret = False
         return ret
 
     def __proprietary(self, id_point):
         ret = False
-        if sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s AND id = %s", (self.usr_id, id_point))[0][0] > 0:
-            ret = True
+        try:
+            if sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s AND id = %s", (self.usr_id, id_point))[0][0] > 0:
+                ret = True
+        except:
+            ret = False
         return ret
 
     def __shared(self, id_point, id_user = None):
         ret = False
-        if sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s AND id_point = %s", (id_user if id_user else self.usr_id, id_point))[0][0] > 0:
-            ret = True
+        try:
+            if sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s AND id_point = %s", (id_user if id_user else self.usr_id, id_point))[0][0] > 0:
+                ret = True
+        except:
+            ret = False
         return ret
 
     def __get_point(self, type = "proprietary", details = False):
@@ -183,7 +207,7 @@ class floteur:
             range["to"] = str(date_end)
         limit = limit if limit else 5
         query = {
-          "size": 0,
+          "size": -1,
           "aggs" : {
             "date_range" : {
               "range" : { "field" : "date", "ranges" : [range]},
@@ -192,7 +216,7 @@ class floteur:
                   "filter": {"terms": {"id_point": id_points}},
                       "aggs": {
                         "dedup" : {
-                          "terms":{"field": "id_point.keyword"},
+                          "terms":{"field": "id_point"},
                           "aggs": {
                             "top_sales_hits": {
                               "top_hits": {
@@ -209,14 +233,14 @@ class floteur:
             }
           }
         }
-        res = es.search(body=query)
+        res = es.search(index="point_test", body=query)
         ret = {}
         for i in res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]:
-            ret[i["key"]] = []
+            ret[str(i["key"])] = []
             for i2 in i["top_sales_hits"]["hits"]["hits"]:
                 if "date" in i2["_source"]:
                     i2["_source"]["date"] = str(i2["_source"]["date"])
-                ret[i["key"]].append(i2["_source"])
+                ret[str(i["key"])].append(i2["_source"])
         return ret
 
     def __hash(self, string):

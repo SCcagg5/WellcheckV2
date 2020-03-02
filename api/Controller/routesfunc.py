@@ -219,13 +219,22 @@ def points_infos(cn, nextc):
     return cn.call_next(nextc, err)
 
 def point_infos(cn, nextc):
-    cn.pr = check.setnoneopt(cn.pr, ["id_points", "period_start", "period_end", "limit"])
+    err = check.contain(cn.pr, ["id_point"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+    cn.pr = check.setnoneopt(cn.pr, ["period_start", "period_end", "limit"])
     use = floteur(cn.private["user"].id)
-    err = use.infos_point(cn.pr["id_points"],
+    err = use.infos_point(cn.pr["id_point"],
                      cn.pr["period_start"],
                      cn.pr["period_end"],
                      cn.pr["limit"]
                      )
+    return cn.call_next(nextc, err)
+
+def points_shared(cn, nextc):
+    use = floteur(cn.private["user"].id)
+    err = use.my_shares()
     return cn.call_next(nextc, err)
 
 def data_add(cn, nextc):
