@@ -18,7 +18,7 @@ services:
        MYSQL_RANDOM_ROOT_PASSWORD: 1
        MYSQL_USER: wellcheck
        MYSQL_DATABASE: wellcheck
-       MYSQL_PASSWORD: 1q2W3e4R
+       MYSQL_PASSWORD: 6^KJmb&*nB1@
 
    elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
@@ -156,11 +156,10 @@ services:
         - 80:80
         - 443:443
       volumes:
-        - ./log:/var/log/nginx
+        - ./nginx/log:/var/log/nginx
         - /srv/nginx/data/certs:/etc/nginx/certs:ro
-        - /srv/nginx/data/conf.d:/etc/nginx/conf.d
-        - ./custom.conf:/srv/nginx/data/conf.d/custom.conf
-        - /srv/nginx/data/vhost.d:/etc/nginx/vhost.d
+        - ./nginx/conf:/etc/nginx/conf.d
+        - ./nginx/vhost:/etc/nginx/vhost.d
         - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/tmp/docker.sock:ro
       networks:
@@ -170,7 +169,7 @@ services:
       image: jrcs/letsencrypt-nginx-proxy-companion
       container_name: letsencrypt
       volumes:
-        - /srv/nginx/data/vhost.d:/etc/nginx/vhost.d
+        - ./nginx/vhost:/etc/nginx/vhost.d
         - /srv/nginx/data/certs:/etc/nginx/certs:rw
         - /srv/nginx/data/html:/usr/share/nginx/html
         - /var/run/docker.sock:/var/run/docker.sock:ro

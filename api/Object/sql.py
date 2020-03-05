@@ -2,7 +2,7 @@ import pymysql
 
 class sql:
     def get(query, data):
-        db = pymysql.connect("datab","wellcheck","1q2W3e4R","wellcheck" )
+        db = pymysql.connect("datab","wellcheck","6^KJmb&*nB1@","wellcheck" )
         cursor = db.cursor()
         cursor.execute(query, data)
         to_ret =  cursor.fetchall()
@@ -11,7 +11,7 @@ class sql:
         return to_ret
 
     def input(query, data):
-        db = pymysql.connect("datab","wellcheck","1q2W3e4R","wellcheck" )
+        db = pymysql.connect("datab","wellcheck","6^KJmb&*nB1@","wellcheck" )
         cursor = db.cursor()
         #try:
         cursor.execute(query, data)
