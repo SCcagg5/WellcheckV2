@@ -28,13 +28,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 					<input class="text email" type="email" name="email" v-model="email" placeholder="Email" required="">
 					<input class="text" type="password" name="password" v-model="password1" placeholder="Password" required="">
 					<input class="text w3lpass" type="password" name="password" v-model="password2" placeholder="Confirm Password" required="">
-					<div class="wthree-text">
-						<label class="anim">
-							<input type="checkbox" class="checkbox" v-model="conditions" required="">
-							<span>I Agree To The Terms & Conditions</span>
-						</label>
-						<div class="clear"> </div>
-					</div>
+					<input type="checkbox" v-model="conditions" required="">
+					<span style="color: white">I Agree To The Terms & Conditions</span>
 					<input type="submit" value="SIGN UP" v-on:click="register">
 				<p>Already have an account ? <a href="./login.html"> Login Now!</a></p>
 			</div>

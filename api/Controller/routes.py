@@ -22,10 +22,7 @@ def setuproute(app, call):
     @app.route('/point/rename/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_rename])              )
     @app.route('/point/infos/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_infos])               )
     @app.route('/points/infos/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, points_infos])              )
-    @app.route('/points/shared/',   ['OPTIONS', 'GET'],         lambda x = None: call([myauth, authuser, points_shared])              )
+    @app.route('/points/shared/',   ['OPTIONS', 'GET'],         lambda x = None: call([myauth, authuser, points_shared])             )
     @app.route('/data/add/',        ['OPTIONS', 'POST'],        lambda x = None: call([myauth, data_add])                            )
-    @app.route('/adm/login/',    	['OPTIONS', 'POST'],        lambda x = None: call([myauth, admtoken])                            )
-    @app.route('/adm/users/',       ['OPTIONS', 'GET'],         lambda x = None: call([myauth, authadmin, all_users])                )
-    @app.route('/adm/spoof/',       ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authadmin, gettokenadm])              )
     def base():
         return

@@ -17,9 +17,7 @@ let compModBilling = {
       if (result.token != void 0) {
         let data = {}
         data['headers'] = cred.methods.get_headers()
-        data['data'] = {
-          'crd_token': result.token.id,
-        }
+        data['data'] = {}
         user.methods.send('addcard', data, this.getcards);
       }
     },
@@ -41,7 +39,7 @@ let compModBilling = {
   },
 
   mounted(){
-    this.stripe = Stripe(`pk_test_DzPutapEGMVUdss4QraUUYyA`),
+    this.stripe = Stripe(`pk_live_342u3Fth66OBYoQH5n4bHB3Z`),
     elements = this.stripe.elements(),
     style = {
       base: {

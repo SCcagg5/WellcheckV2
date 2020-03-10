@@ -91,7 +91,7 @@ let leftnav = {
                   <div ref="link2" class="nav-text nav-second" v-on:click="modale('Billing')"   >Billing</div>
                   <div ref="link3" class="nav-text nav-second" v-on:click="modale('Invoices')"  >Invoices</div>
                   <div ref="link4" class="nav-text"  v-on:click="redirect('/map')"            >Map</div>
-                  <div ref="link5" class="nav-text nav-second" v-on:click="modale('Points')"    >Points</div>
+                  <div ref="link5" class="nav-text nav-second" v-on:click="modale('Devices')"    >Devices</div>
                   <div ref="link6" class="nav-text nav-second" v-on:click="modale('Share')"     >Share</div>
                   <div ref="link7" class="nav-text" v-on:click="user.methods.logout"          >Logout</div>
                   <div class="w3copyright-agile in-nav">

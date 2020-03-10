@@ -1,8 +1,9 @@
 import stripe
 import time
+import os
 from .sql import sql
 
-stripe.api_key = 'sk_test_0rg4e2dv9iOAxFCDrWMRgVqg'
+stripe.api_key = str(os.getenv('STRIPE_PRIV', None))
 
 class tpe:
     def addcard(token, user_id):

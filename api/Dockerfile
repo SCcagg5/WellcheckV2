@@ -5,7 +5,8 @@ LABEL maintainermail="eliot.courtel@wanadoo.fr"
 
 WORKDIR /home/api
 
+RUN pip install --upgrade pip
+COPY ./requirements.txt ./
+RUN pip install --upgrade -r requirements.txt
 
-ENTRYPOINT \
-	   pip install --upgrade pip && \
-	   pip install --upgrade -r requirements.txt && python3 server.py;
+ENTRYPOINT python3 server.py;

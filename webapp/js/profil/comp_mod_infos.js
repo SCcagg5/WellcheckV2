@@ -64,7 +64,7 @@ let compModInfos = {
         let length = Math.ceil(data.length) - 2;
         if (length > 11) {
           data = data.substring(0, 12);
-          length = 10;
+          length = Math.ceil(data.length) - 1;
         } else if (length == -1) {
           this.data.phone = '';
           return;
@@ -80,15 +80,15 @@ let compModInfos = {
                    ['+$1-$2-$3-$4-$5',    /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{1}).*/],
                    ['+$1-$2-$3-$4-$5',    /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2}).*/],
                    ['+$1-$2-$3-$4-$5-$6', /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{1}).*/],
-                   ['+$1-$2-$3-$4-$5-$6', /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2}).*/]
+                   ['+$1-$2-$3-$4-$5-$6', /^[+](\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2}).*/],
+                   ['+$1-$2-$3-$4-$5-$6', /^[+](\d{3})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2}).*/]
                  ]
         let mask = maskreg[length][0];
-        let reg = maskreg[length][1];console.log(mask, reg, length);
+        let reg = maskreg[length][1];
         this.data.phone = data.replace(reg, mask).substring(0, mask.length);
         document.getElementById('phone').value = this.data.phone
-          return this.data.phone
+        return this.data.phone
       } else {
-        console.log('else')
         let length = Math.ceil(data.length) - 1;
         if (length > 9) {
           data = data.substring(0, 10);
@@ -172,7 +172,7 @@ let compModInfos = {
                 <div class="row">
                 <div class="hidemd col-sm-12 col-4 margin5px" for="phone">Phone </div>
                 <div class="col-md-3 hidesm"></div>
-                <input @keyup="phonemask()" class="form-control compinput col-md-6  col-sm-12 col-8" id="phone"  type="text" placeholder="Phone number" :value=this.data.phone >
+                <input v-on:input="phonemask()" class="form-control compinput col-md-6  col-sm-12 col-8" id="phone"  type="text" placeholder="Phone number" :value=this.data.phone >
                 </div>
               </div>
             </div>

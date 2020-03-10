@@ -42,24 +42,26 @@ class floteur:
             return [False, "Id_points should be a list", 400]
         for id_point in id_points:
             if not self.__exist(id_point):
-                return [False, "Invalid id_point: '" + id_point + "'", 400]
+                return [False, "Invalid id_point: id_point : '" + str(id_point) + "'", 400]
             succes = False
             if self.__proprietary(id_point):
                 id_to = sql.get("SELECT id FROM `user` WHERE email = %s", (email))
                 if len(id_to) < 1:
-                    return [False, "Invalid email: 'id_point'", 400]
-                id_to = id_to[0]
-                if id_to != self.usr_id:
-                    return [False, "Can't share to yourself: 'id_point'", 401]
-                if not self.__shared(id_point, id_to):
-                    return [False, "Already shared with: '"+ id_to +"'", 401]
+                    return [False, "Invalid email: '" + email + "'", 400]
+                id_to = str(id_to[0][0])
+                if id_to == self.usr_id:
+                    return [False, "Can't share to yourself: id_point : '" + str(id_point) + "'", 401]
+                if self.__shared(id_point, id_to):
+                    return [False, "Already shared with: '"+ email +"'", 401]
                 date = str(int(round(time.time() * 1000)))
+                number = sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s", (id_to))[0][0]
+                name = "point_" + str(number)
                 succes =  sql.input("INSERT INTO `point_shared` (`id`, `id_user`, `id_point`, `date`, `surname`) VALUES (NULL, %s, %s, %s, %s)", \
-                (id_to  , id_point, date, None))
+                (id_to, id_point, date, name))
+                if not succes:
+                    return [False, "data input error", 500]
             else:
-                return [False, "Invalid right : id_point : '" + id_point + "'", 403]
-            if not succes:
-                return [False, "data input error", 500]
+                return [False, "Invalid right : id_point : '" + str(id_point) + "'", 403]
         return [True, {}, None]
 
     def my_shares(self):
