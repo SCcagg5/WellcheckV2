@@ -10,6 +10,7 @@
 
 .container-extend {
   height: calc(100% - 57px);
+  padding: 0px;
 }
 
 #sidebar-wrapper {
