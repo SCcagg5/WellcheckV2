@@ -33,9 +33,7 @@ services:
      environment:
        PMA_USER: ${DB_USER}
        PMA_PASSWORD: ${DB_PASS}
-       VIRTUAL_HOST: sql.${DOMAIN}
-       VIRTUAL_PORT: 80
-
+       
    goaccess:
      image: nginx
      container_name: goaccess

@@ -66,8 +66,17 @@
     </nav>
 
     <div class="container-fluid container-extend">
+      <iframe frameborder="0" id="iframe" src="<?php
+      $available = scandir("/stats/");
+      foreach ($available as $file){
+        $res = explode(".html", $file);
+        if (count($res) > 1){
+          echo "./stats/".$res[0].".html";
+          break;
+        }
 
-      <iframe frameborder="0" id="iframe" src="" class="all">
+      }
+      ?>" class="all">
       </iframe>
     </div>
   </div>
