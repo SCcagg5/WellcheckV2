@@ -5,7 +5,8 @@ let compModShare = {
       emailto: "",
       points: [],
       shared: [],
-      already: {}
+      already: {},
+      display_test: true
     }
   },
 
@@ -22,6 +23,14 @@ let compModShare = {
   },
 
   methods:{
+    update: function(){
+      this.points = JSON.parse(localStorage.points)['proprietary'];
+      this.display_test = localStorage.testmode == "true" ? true : false;
+      this.fshared();
+      this.$nextTick(function () {
+          document.querySelector("#c2d.test-checkbox").checked = this.display_test;
+      });
+    },
     fshared: function() {
       let headers = cred.methods.get_headers()
       user.methods.retrieve('points/shared', headers, this.sortshared);
@@ -59,6 +68,8 @@ let compModShare = {
           }
         }
       }
+      if (data["id_points"] == [])
+        return;
       user.methods.send('point/share', data, this.fshared);
     },
     sort: function() {
@@ -93,11 +104,12 @@ let compModShare = {
             <div class="sepinput"></div>
             <div class="container">
               <div class="row ml-2 mr-2">
-                  <div class="col-sm-12 col-12 margin5px">{{ points.length > 1 ? "Your devices (" + points.length + ")" : "Your device" }}</div>
-                  <br><br>
-                  <div v-for="point in points" class="pointshare col-md-6 col-sm-6 col-lg-4" :style="already[point.id.toString()] != void 0 ? 'color: rgb(154, 156, 165);background-color: #f5f6fc' : ''">
+                  <div class="col-sm-12 col-12 margin5px">{{ points.length > 1 ? "Your devices (" + points.length + ")" : "Your device" }}
+                  <br><small>Test devices : <input id="c2d" type="checkbox" class="test-checkbox" v-on:click="display_test = !display_test"></small></div>
+                  <br><br><br>
+                  <div v-for="point in points" v-if="point.test == false || point.test == true && display_test == true" class="pointshare col-md-6 col-sm-6 col-lg-4" :style="already[point.id.toString()] != void 0 || point.test == true ? 'color: rgb(154, 156, 165);background-color: #f5f6fc' : ''">
                     <label for="c2d" class="ml-0 mr-5">{{ point.surname}}</label>
-                    <input id="c2d" type="checkbox" class="ml-5 mr-0" v-on:click="switchshare(point.id)" :checked="already[point.id.toString()] != void 0" :disabled="already[point.id.toString()] != void 0">
+                    <input id="c2d" type="checkbox" class="ml-5 mr-0" :class="point.test == true ? 'test-checkbox large-checkbox' : ''" v-on:click="switchshare(point.id)" :checked="already[point.id.toString()] != void 0 || point.test == true" :disabled="already[point.id.toString()] != void 0 || point.test == true">
                     <div v-if="already[point.id.toString()] != void 0" style="text-align: center;font-size: 11px;padding: 0px;">
                         Shared {{ already[point.id.toString()][1] | tostr }}
                     </div>
@@ -114,8 +126,12 @@ let compModShare = {
   `,
   mounted(){
     this.fshared();
+    this.$nextTick(function () {
+        document.querySelector("#c2d.test-checkbox").checked = this.display_test;
+    });
   },
   beforeMount(){
     this.points = JSON.parse(localStorage.points)['proprietary'];
+    this.display_test = localStorage.testmode == "true" ? true : false;
   }
 };

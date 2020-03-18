@@ -11,8 +11,17 @@ class floteur:
         self.usr_id = str(usr_id)
 
     def add(self, id_sig):
-        number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s", (self.usr_id))[0][0]
-        name = "point_" + str(number)
+        id_sig = str(id_sig)
+        if (id_sig != "-1"):
+            return [False, "Invalid Sigfox_id", 400]
+        if (id_sig == "-1"):
+            number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s AND id_sig = -1", (self.usr_id))[0][0]
+            if number > 2:
+                return [False, "Can't have more than 3 test devices", 401]
+            name = "test_" + str(number + 1)
+        else:
+            number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s", (self.usr_id))[0][0]
+            name = "point_" + str(number + 1)
         date = str(int(round(time.time() * 1000)))
         succes = sql.input("INSERT INTO `point` (`id`, `id_user`, `id_sig`, `name`, `surname`, `date`) VALUES (NULL, %s, %s, %s, %s, %s)", \
         (int(self.usr_id), id_sig, name, name, date))
@@ -169,14 +178,15 @@ class floteur:
         res = []
         if type == "proprietary":
             if details:
-                res = sql.get("SELECT `id`, `name`, `surname`, `date` FROM `point` WHERE id_user = %s", (self.usr_id))
+                res = sql.get("SELECT `id`, `id_sig`, `name`, `surname`, `date` FROM `point` WHERE id_user = %s", (self.usr_id))
                 ret = {}
                 for i in res:
                     ret[str(i[0])] = {
                             "id": i[0],
-                            "name": i[1],
-                            "surname": i[2],
-                            "date": i[3]
+                            "test": True if i[1] == -1 else False,
+                            "name": i[2],
+                            "surname": i[3],
+                            "date": i[4]
                         }
             else:
                 res = sql.get("SELECT id FROM `point` WHERE id_user = %s", (self.usr_id))
@@ -185,14 +195,15 @@ class floteur:
                     ret.append(i[0])
         elif type == "shared":
             if details:
-                res = sql.get("SELECT point.id, point.name, point_shared.surname, point_shared.date FROM `point_shared` INNER JOIN `point` ON `id_point` = point.id WHERE point_shared.id_user = %s", (self.usr_id))
+                res = sql.get("SELECT point.id, point.id_sig, point.name, point_shared.surname, point_shared.date FROM `point_shared` INNER JOIN `point` ON `id_point` = point.id WHERE point_shared.id_user = %s", (self.usr_id))
                 ret = {}
                 for i in res:
                     ret[str(i[0])] = {
                             "id": i[0],
-                            "name": i[1],
-                            "surname": i[2],
-                            "date": i[3]
+                            "test": True if i[1] == -1 else False,
+                            "name": i[2],
+                            "surname": i[3],
+                            "date": i[4]
                         }
             else:
                 res = sql.get("SELECT id FROM `point_shared` WHERE id_user = %s", (self.usr_id))

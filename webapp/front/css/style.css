@@ -1323,8 +1323,16 @@ font-size: 21px;
 }
 
 
-.errorbtn {
-	background-color: #4CAF50 !important
+.successbtn {
+	background-color: #03ba00 !important;
+	color: white;
+	border-radius: 2px;
+	padding-left: 4px;
+	padding-right: 5px;
+}
+
+.testbtn {
+	background-color: #ff970f !important;
 	color: white;
 	border-radius: 2px;
 	padding-left: 4px;
@@ -1342,7 +1350,7 @@ font-size: 21px;
 	 input[type='checkbox'], input[type='radio'] {
 		 --active: #275efe;
 		 --active-inner: #fff;
-		 --focus: 2px rgba(39, 94, 254, .3);
+		 --focus: 2px rgba(253, 160, 39, .3);
 		 --border: #bbc1e1;
 		 --border-hover: #275efe;
 		 --background: #fff;
@@ -1442,6 +1450,8 @@ font-size: 21px;
 	}
 	 input[type='checkbox'].switch:checked {
 		 --ab: var(--active-inner);
+		 --b: #ff970f;
+     --bc: #ff970f;
 		 --x: 17px;
 	}
 	 input[type='checkbox'].switch:disabled:not(:checked):after {
@@ -1461,4 +1471,89 @@ font-size: 21px;
 	 input[type='radio']:checked {
 		 --s: 0.5;
 	}
+}
+
+.test-switch:hover:not(:checked):not(:disabled){
+	--bc: #ff970f !important;
+}
+
+.test{
+	background-image: -webkit-linear-gradient(0deg, #ff970f 0%, #ffc61c 100%);
+	background-image: -ms-linear-gradient(0deg, #ff970f 0%, #ffc61c 100%);
+	font-size: 14px;
+}
+
+.test-checkbox {
+	width: 16px !important;
+	height: 16px !important;
+	top: 5px !important;
+}
+
+.large-checkbox {
+	width: 21px !important;
+	height: 21px !important;
+	top: 6px !important;
+}
+
+
+.test-checkbox:checked {
+	--b: #ff970f !important;
+	--bc: #ff970f !important;
+}
+
+.test-checkbox:disabled:checked {
+	--b: #f7c383 !important;
+	--bc: #f9c585 !important;
+}
+
+.test-checkbox:hover:not(:checked):not(:disabled){
+	--bc: #ff970f !important;
+}
+
+.test-checkbox:not(.switch):after {
+	width: 4px !important;
+	left: 5px !important;
+	top: 2px !important;
+}
+
+.large-checkbox:not(.switch):after {
+	width: 5px !important;
+	left: 7px !important;
+	top: 4px !important;
+}
+
+.test-nav:hover {
+	color: #ff970f !important;
+}
+
+.inf-content {
+	width: 300px;
+	height: 80px;
+}
+
+@media(max-width:576px){
+	.inf-content {
+		width: 200px;
+		height: 120px;
+	}
+}
+
+@media(max-width:400px){
+	.inf-content {
+		width: 160px;
+	}
+}
+
+.notebarholder{
+	width: 100%;
+  background-color: rgb(100, 100, 100);
+	overflow: hidden;
+	border-radius: 7px;
+	margin-top: 5px;
+}
+
+.notebar{
+	width: 0%;
+	height: 10px;
+	background-color: grey;
 }

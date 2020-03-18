@@ -23,9 +23,15 @@ let mod = {
         this.open = !this.open;
         this.change()
       }
-      if (this.open)
+      if (this.open) {
         this.name = name
         this.comp = 'compMod' + name;
+        this.$nextTick(function () {
+        if (this.$refs.inside.update != void 0){
+          this.$refs.inside.update();
+        }
+      })
+      }
 
     },
     loaddata: function(data) {
@@ -92,7 +98,7 @@ let mod = {
         </div>
         <div id="cross" class="cross modalecross"  v-on:click=close>╳</div>
       </div>
-      <component :data=this.data v-bind:is=this.comp></component>
+      <component ref="inside" :data=this.data v-bind:is=this.comp></component>
     </div>
   </div>
   `

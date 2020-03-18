@@ -34,7 +34,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         map = new google.maps.Map(document.getElementById('vuemap'), {
           center: {lat: 48.813896, lng: 2.392448},
           zoom: 14,
-          minZoom: 5,
+          minZoom: 3,
           streetViewControl: false,
           mapTypeControl: false,
           fullscreenControl: false,
@@ -59,11 +59,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
       }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDbGl0_XwDOzKEqu-CrXstGvjlTbsNXNTs&callback=initMap"
-    async defer></script>
+    async defer>google.maps.event.addDomListener(window,'load', initMap);</script>
 	<script src="./js/conf.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+	<script src="./js/vue.js"></script>
+	<link href="./css/bootstrap.min.css" rel="stylesheet">
+	<script src="./js/axios.min.js"></script>
 	<script src="./js/commons/comp_messages.js"></script>
 	<script src="./js/commons/comp_warning.js"></script>
 	<script src="./js/commons/location.js"></script>

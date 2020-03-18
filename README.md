@@ -35,7 +35,7 @@
 
 **Lastly:**
 
-* Go to `http://admin.${YOUR_DOMAIN}/sql/` and import `./webapp/db/sql/dumps/wellcheck.sql` into the **wellcheck**'s database
+* Go to `http://admin.${YOUR_DOMAIN}/phpmyadmin/` and import `./webapp/db/sql/dumps/wellcheck.sql` into the **wellcheck**'s database
 * Go to `http://admin.${YOUR_DOMAIN}/elastic/` and create the `point` index
 
 **You can know use the landing page, the dashboard and the api properly !**

@@ -42,7 +42,7 @@ let compModInfos = {
       this.$parent.close()
     },
 
-    update: function(){
+    updateinfos: function(){
       let data = {}
       data['headers'] = cred.methods.get_headers()
       data['data'] = {
@@ -180,7 +180,7 @@ let compModInfos = {
         </div>
       </form>
       <br><br>
-      <div class="wc-button" v-on:click="update()"> update </div>
+      <div class="wc-button" v-on:click="updateinfos()"> update </div>
     </div>
   `
 }

@@ -4,7 +4,7 @@ let leftnav = {
       type: 'open',
       email: localStorage.email,
       page: localStorage.page,
-      open: true
+      open: true,
     }
   },
   methods: {
@@ -44,7 +44,18 @@ let leftnav = {
     },
     redirect: function(location){
       loc.methods.redirect(location)
+    },
+    changetest: function() {
+      this.display_test = !this.display_test;
+      localStorage.testmode = this.display_test;
+      if (vm.$refs.modal.$refs.inside && vm.$refs.modal.$refs.inside.update){
+        vm.$refs.modal.$refs.inside.update();
+      }
+      vm.testpointer(this.display_test);
     }
+  },
+  beforeMount(){
+    this.display_test = localStorage.testmode == "true" ? true : false;
   },
   mounted: function () {
     this.$nextTick(function () {
@@ -77,6 +88,7 @@ let leftnav = {
           add = true;
         }
       }
+      document.querySelector("#s2d.test-switch").checked = this.display_test;
     })
   },
   template: `
@@ -94,6 +106,12 @@ let leftnav = {
                   <div ref="link5" class="nav-text nav-second" v-on:click="modale('Devices')"    >Devices</div>
                   <div ref="link6" class="nav-text nav-second" v-on:click="modale('Share')"     >Share</div>
                   <div ref="link7" class="nav-text" v-on:click="user.methods.logout"          >Logout</div>
+                  <br>
+                  <div ref="link8" class="nav-text test-nav">
+                    <input id="s2d" type="checkbox" class="switch test-switch" v-on:click=changetest>
+                    <label for="s2d" style="font-size: 1rem;">Test mod</label>
+                  </div>
+
                   <div class="w3copyright-agile in-nav">
               			<p>Wellcheck© 2020.<br>All Rights Reserved.</p>
             		  </div>

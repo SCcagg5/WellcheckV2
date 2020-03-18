@@ -2,7 +2,7 @@ let compModDevices = {
   data: function() {
     return {
       points: [],
-      limit: 0
+      limit: 0,
     }
   },
 
@@ -19,12 +19,39 @@ let compModDevices = {
   },
 
   methods:{
+    update: function(){
+      this.points = JSON.parse(localStorage.points);
+      this.limit = Math.round(new Date().getTime() - 3600000);
+      this.display_test = localStorage.testmode == "true" ? true : false;
+      this.$nextTick(function () {
+          document.querySelector("#c2d.test-checkbox").checked = this.display_test;
+      });
+    },
     addPoint: function () {
       vm.$refs.nav.modale('Add_a_device');
       let data = {}
       data['note'] = "Add your Wellcheck device";
       vm.$refs.modal.loaddata(data);
-    }
+    },
+    addTest: function(){
+      let data = {}
+      data['headers'] = cred.methods.get_headers()
+      data['data'] = {"id_sig": -1}
+      user.methods.send('point/add', data, this.infos);
+    },
+    infos: function() {
+      let data = {}
+      data['headers'] = cred.methods.get_headers()
+      data['data'] = {}
+      user.methods.send('points/infos', data, this.store);
+    },
+    store: function(data) {
+      if (data != '') {
+        localStorage.points = JSON.stringify(data['points']);
+        this.points = JSON.parse(localStorage.points);
+        this.limit = Math.round(new Date().getTime() - 3600000);
+      }
+    },
   },
   template: `
   <div>
@@ -35,18 +62,19 @@ let compModDevices = {
           <div class="container">
             <div class="row">
             <div v-if="points.proprietary.length > 0" class="col-12">
-              <div class="col-sm-12 col-12 margin5px" for="input2">{{ points.proprietary.length > 1 ? "Your devices (" + points.proprietary.length + ")" : "Your device" }}</div>
+              <div class="col-sm-12 col-12 margin5px" for="input2">{{ points.proprietary.length > 1 ? "Your devices (" + points.proprietary.length + ")" : "Your device" }}
+              <br><small>Test devices : <input id="c2d" type="checkbox" class="test-checkbox" v-on:click="display_test = !display_test"></small></div>
               </br>
               <div class="col-md-1 hidesms"></div>
               <ul class='list-group col-12 sm-modalelist' style="overflow-x: hidden">
-                  <li v-for="point in points.proprietary" class="list-group-item list-group-item-action">
+                  <li v-for="point in points.proprietary" v-if="point.test == false || point.test == true && display_test == true" v-on:click="vm.moveto(point.id)" class="list-group-item list-group-item-action">
                     <div class="row">
                       <div class="ml-0 mr-0" style="width: 40px; height: auto; color: grey"> {{point.id}} </div>
-                      <div class="ml-0 mr-0"style="text-align: left"> {{ point.surname }} </div>
+                      <div class="ml-0 mr-0"style="text-align: left"> {{ point.surname }}</div>
                       <div class="ml-auto mr-0 datelist"> Added {{ point.date | tostr }} </div>
-
-                      <div v-if="point.data.length > 0 && point.data[0].date > limit " class="ml-3 mr-3" style="text-align: right"> Online &#10004; </div>
-                      <div v-if="point.data.length == 0 || point.data[0].date < limit" class="ml-3 mr-3 errorbtn" style="text-align: right"> Offline &#10006; </div>
+                      <div v-if="point.test == true" class="ml-3 mr-3 testbtn" style="text-align: right"> Test &#10004; </div>
+                      <div v-if="point.data.length > 0 && point.data[0].date > limit && point.test == false" class="ml-3 mr-3 successbtn" style="text-align: right"> Online &#10004; </div>
+                      <div v-if="(point.data.length == 0 || point.data[0].date < limit) && point.test == false" class="ml-3 mr-3 errorbtn" style="text-align: right"> Offline &#10006; </div>
                     </div>
                   </li>
                 </ul>
@@ -78,11 +106,19 @@ let compModDevices = {
   </form>
     <br><br>
       <div style="width:160px" class="wc-button" v-on:click=addPoint> Add a device </div>
+    <br><br>
+      <div v-if="display_test == true" style="width:160px" class=" test wc-button" v-on:click=addTest> Add a Test device </div>
   </div>
   `,
   beforeMount(){
     this.points = JSON.parse(localStorage.points);
     this.limit = Math.round(new Date().getTime() - 3600000);
+    this.display_test = localStorage.testmode == "true" ? true : false;
+  },
+  mounted(){
+    this.$nextTick(function () {
+        document.querySelector("#c2d.test-checkbox").checked = this.display_test;
+    });
   }
 };
 
