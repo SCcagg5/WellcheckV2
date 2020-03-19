@@ -97,7 +97,6 @@
   });
 
   function switchiframe(path){
-    console.log($("#iframe")[0].src);
     $("#iframe")[0].src = path;
   }
 </script>

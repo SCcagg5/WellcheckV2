@@ -8,7 +8,6 @@ let container = {
   components: { warning },
   methods: {
     display: function(){
-      console.log("ok")
     }
   },
 

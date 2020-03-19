@@ -246,6 +246,7 @@ class floteur:
             }
           }
         }
+        es.indices.refresh(index="point_test")
         res = es.search(index="point_test", body=query)
         ret = {}
         for i in res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]:

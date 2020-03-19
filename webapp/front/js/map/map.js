@@ -26,14 +26,14 @@ let vm = new Vue({
         return str;
       },
       update: function(){
-        var lng = 19.0485488;
         var test;
+        var last_data;
         for (var i = 0; i < this.markers['proprietary'].length; i++){
-          lng += 1;
           test = this.markers['proprietary'][i]["test"]
+          last_data = this.markers['proprietary'][i]["data"][0]
           this.markers['proprietary'][i]["marker"]
             = new google.maps.Marker({
-                position: new google.maps.LatLng(47.5160839, lng),
+                position: new google.maps.LatLng(last_data['data']['pos']['lat'], last_data['data']['pos']['lon']),
                 title:this.markers['proprietary'][i]["name"],
                 map: test == true && localStorage.testmode == "false" ? null :  map,
                 data: {'id': this.markers['proprietary'][i]['id'], 'order': i},
@@ -46,19 +46,19 @@ let vm = new Vue({
           });
           this.markers['proprietary'][i]['note'] = 3
           this.markers['proprietary'][i]["infos"] = new google.maps.InfoWindow({
-            content: `<div class="inf-content">
+            content: `<div class="inf-content" style="font-size: 15px;">
               <div class="container">
                 <div class="row">
-                  <div class="col-12 col-sm-6">
+                  <div class="col-12 col-sm-6" style="margin-top: 5px;">
                     Name: ` + this.markers['proprietary'][i]['name'] + `
                   </div>
-                  <div class="col-12 col-sm-6">
+                  <div class="col-12 col-sm-6" style="margin-top: 5px;">
                     Surname: ` + this.markers['proprietary'][i]['surname'] + `
                   </div>
-                  <div class="col-12 col-sm-6">
+                  <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
                     Since: ` + this.datestr(this.markers['proprietary'][i]['date']) + `
                   </div>
-                  <div class="col-12 col-sm-6">
+                  <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
                     Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
                   </div>
                   <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
@@ -79,10 +79,9 @@ let vm = new Vue({
             map: map
           });
         }
-        console.log(this.markers['proprietary'][0])
         setTimeout(() => {this.setmarkers()}, 500);
         for (var i = 0; i< this.markers['shared'].length; i++){
-          console.log(i);
+
         }
 
       },
@@ -100,7 +99,7 @@ let vm = new Vue({
         }
       },
 
-      moveto: function(id, marker = null){
+      moveto: function(id, marker = null, force = false){
         var done = false;
         if (marker != null){
           done = true
@@ -118,12 +117,21 @@ let vm = new Vue({
           }
         }
         if (done == true) {
-          if (map.getZoom() < 8){
-            map.setZoom(8);
+          if (force == true){
+            if (map.getZoom() < 8){
+              map.setZoom(8);
+            }
+            map.panTo(marker['marker'].getPosition());
           }
-          map.panTo(marker['marker'].getPosition());
-          marker['infos'].open(map, marker['marker']);
 
+
+          for (var i = 0; i < this.markers['shared'].length; i++){
+            this.markers['shared'][i]['infos'].close();
+          }
+          for (var i = 0; i < this.markers['proprietary'].length; i++){
+            this.markers['proprietary'][i]['infos'].close();
+          }
+          marker['infos'].open(map, marker['marker']);
           let center = map.getCenter();
           let pos = {'lat': center.lat(), 'lng': center.lng(), 'zoom': map.getZoom()};
           localStorage.position = JSON.stringify(pos);
@@ -132,27 +140,53 @@ let vm = new Vue({
 
       setmarkers: function(){
         for (var i = 0; i < this.markers['proprietary'].length; i++){
-          console.log(this.markers['proprietary'][i]['infos'])
           this.markers['proprietary'][i]["marker"].addListener('click', function() {
             vm.moveto(this.data['id']);
           }, false);
         }
       },
 
-      infos: function() {
+      infos: function(res) {
         let data = {}
         data['headers'] = cred.methods.get_headers()
         data['data'] = {}
-        user.methods.send('points/infos', data, this.store);
+        if (res == void 0 || res['data_added'] == void 0){
+          user.methods.send('points/infos', data, this.store);
+        } else {
+          user.methods.send('points/infos', data, this.storebis);
+        }
       },
-
+      storebis: function(data){
+          if (data != '') {
+            localStorage.points = JSON.stringify(data['points']);
+            this.markers = data['points'];
+            this.update();
+          }
+      },
       store: function(data) {
         if (data != '') {
           localStorage.points = JSON.stringify(data['points']);
           this.markers = data['points'];
           this.update();
+          for (var i = 0; i < this.markers['proprietary'].length; i++){
+            if (this.markers['proprietary'][i]['test'] == true && this.markers['proprietary'][i]['data'].length == 0){
+              let data = {}
+              data['headers'] = cred.methods.get_headers()
+              data['data'] = {
+                "data": {
+                	"data": {
+
+                  },
+                	"pos": {"lon": map.getCenter().lng(), "lat": map.getCenter().lat()}
+                },
+                "point_id": this.markers['proprietary'][i]['id'],
+                "sig_id": -1
+              };
+              user.methods.send('data/add', data, this.infos);
+            }
+          }
         }
-      }
+      },
    },
    mounted(){
      cred.methods.api_cred()

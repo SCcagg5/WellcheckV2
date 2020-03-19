@@ -38,7 +38,7 @@ let user = {
       } else {
         axios.post(url, data.data, { headers: data.headers})
           .then(response => this.relay(response.data, callback, false))
-          .catch(error => this.error(error));
+        //  .catch(error => this.error(error));
       }
     },
 
