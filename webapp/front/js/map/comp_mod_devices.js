@@ -95,7 +95,7 @@ let compModDevices = {
             <div class="row">
             <div v-if="points.proprietary.length > 0" class="col-12">
               <div class="col-sm-12 col-12 margin5px" for="input2">{{ points.proprietary.length > 1 ? "Your devices (" + points.proprietary.length + ")" : "Your device" }}
-              <br><small>Test devices : <input id="c2d" type="checkbox" class="test-checkbox" v-on:click="display_test = !display_test"></small></div>
+              <br><small>Test devices : <input id="c2d" type="checkbox" class="test-checkbox" v-on:click="display_test = !display_test; points = JSON.parse(localStorage.points);"></small></div>
               </br>
               <div class="col-md-1 hidesms"></div>
               <ul class='list-group col-12 sm-modalelist' style="overflow-x: hidden">

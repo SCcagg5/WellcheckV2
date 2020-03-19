@@ -50,6 +50,7 @@ let leftnav = {
       localStorage.testmode = this.display_test;
       if (vm.$refs.modal.$refs.inside && vm.$refs.modal.$refs.inside.update){
         vm.$refs.modal.$refs.inside.update();
+        console.log(vm.$refs.modal.$refs.inside.update());
       }
       vm.testpointer(this.display_test);
     }

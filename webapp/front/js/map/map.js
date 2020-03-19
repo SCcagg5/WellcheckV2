@@ -35,7 +35,7 @@ let vm = new Vue({
             = new google.maps.Marker({
                 position: new google.maps.LatLng(last_data['data']['pos']['lat'], last_data['data']['pos']['lon']),
                 title:this.markers['proprietary'][i]["name"],
-                map: test == true && localStorage.testmode == "false" ? null :  map,
+                map: test == true && (localStorage.testmode == "false" || localStorage.testmode == void 0) ? null :  map,
                 data: {'id': this.markers['proprietary'][i]['id'], 'order': i},
                 icon: {
                     url: test == true ? "./imgs/float_test.svg" : "./imgs/float.svg", // url
