@@ -1,0 +1,62 @@
+<!doctype html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <meta name="Description" content="Device to analyse water quality">
+  <title>Wellcheck 3D</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+  <link rel="icon" href="imgs/logo-min.png" type="image/gipng">
+  <script type="module" src="./js/3D/xlayers-lite.esm.js"></script>
+  <script nomodule="" src="./js/3D/xlayers-lite.js"></script>
+  <link href="./css/3d.css" rel="stylesheet">
+    </head>
+    <body>
+    <div style="width: 100vw; height: 100vh;">
+      <x-layers src="./imgs/float.sketch" mode="3d" wireframe="true" zoom="1"></x-layers>
+
+      <script>
+        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+          navigator.serviceWorker.getRegistration().then(function(registration) {
+            if (registration) {
+              registration.unregister().then(function() { location.reload(true) });
+            }
+          });
+
+
+          var update = -1;
+          var stylescont = ["left: -350px;", "0px;", "left: 150px;"]
+          var styles = [
+                         "margin-top: 180px; transform: rotateY(60deg) rotateX(20deg)",
+                         "margin-top: 200px; transform: rotateY(0deg) rotateX(25deg)",
+                         "margin-left: 150px; margin-top: -80px; transform: rotateY(-60deg) rotateX(-20deg)"
+                       ]
+          function updatefnc(){
+              update += 1;
+              if (document.querySelector("x-layers-canvas") != void 0) {
+                document.querySelector("x-layers-container > div").style = stylescont[update % 3]
+                document.querySelector("x-layers-canvas").style = styles[update % 3]
+              }
+          }
+          setTimeout(updatefnc, 2000);
+          setInterval(updatefnc, 10000);
+        }
+      </script>
+</div>
+<ul class="w3lsg-bubbles">
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+</div>
+</body>
+</html>
