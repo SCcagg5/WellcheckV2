@@ -1,17 +1,38 @@
 <!doctype html>
 <html dir="ltr" lang="en">
-<head>
-  <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8">
 
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <meta name="Description" content="Device to analyse water quality">
-  <title>Wellcheck 3D</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-  <link rel="icon" href="imgs/logo-min.png" type="image/gipng">
-  <script type="module" src="./js/3D/xlayers-lite.esm.js"></script>
-  <script nomodule="" src="./js/3D/xlayers-lite.js"></script>
-  <link href="./css/3d.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+    <meta name="Description" content="Device to analyse water quality">
+    <title>Wellcheck 3D</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link rel="icon" href="imgs/logo-min.png" type="image/gipng">
+    <script type="module" src="./js/3D/xlayers-lite.esm.js"></script>
+    <script nomodule="" src="./js/3D/xlayers-lite.js"></script>
+    <link href="./css/3d.css" rel="stylesheet">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154947792-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-154947792-1');
+
+      function changefile(file, update = true){
+        document.getElementById('viewer').data = file;
+        document.getElementById('viewerlink').href = file;
+        PDFObject.embed(file, "#viewer2");
+        var list= document.getElementsByTagName("select");
+        for (var i = 0; i < list.length; i++) {
+           if (list[i].value != file){list[i].selectedIndex = 0;}
+        }
+        if (update) {
+        window.location.href = document.URL.split('#')[0] + '#' +file.split("pdfs/")[1].split(".pdf")[0];
+        }
+      }
+
+      </script>
     </head>
     <body>
     <div style="width: 100vw; height: 100vh;">
@@ -32,7 +53,9 @@
             var win = window.innerWidth;
             var res = "";
             var size = 0.1;
-            s = [0.15, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
+            var left = 0;
+            var top = 0;
+            s = [0.1, 0.23, 0.34, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4]
             for (var i = s.length; i > 0; i--){
               if (win > (i - 1) * 330){
                 size = s[i - 1]
@@ -43,26 +66,32 @@
             s = [[-80, -20, 30], [-125, -60, 50], [-250, -120, 100]]
             for (var i = s.length; i > 0; i--){
               if (win > (i - 1) * 330){
-                size = s[i - 1][update % 3]
+                left = s[i - 1][update % 3]
                 i = 0;
               }
             }
-            res += "left: " + size + "px;"
-            return res;
+            res += "left: " + left  + "px;"
+            if (size > 0.7)
+              top = 180;
+            if (size > 1.4)
+              top = 300;
+            console.log(top)
+            var styles = [
+                          "margin-top: " + (180 + top)+ "px; transform: rotateY(60deg) rotateX(20deg)",
+                          "margin-top: " + (200 + top)+ "px; transform: rotateY(0deg) rotateX(25deg)",
+                          "margin-left: 150px; margin-top: " + (200 + top)+ "px; margin-top: -80px; transform: rotateY(-60deg) rotateX(-20deg)"
+                         ][update % 3]
+                         console.log(styles, update % 3);
+            return [res, styles];
           }
           stylescon();
-          var stylescont = ["left: -350px;", "0px;", "left: 150px;"]
-          var styles = [
-                         "margin-top: 180px; transform: rotateY(60deg) rotateX(20deg)",
-                         "margin-top: 200px; transform: rotateY(0deg) rotateX(25deg)",
-                         "margin-left: 150px; margin-top: -80px; transform: rotateY(-60deg) rotateX(-20deg)"
-                       ]
+
           function updatefnc(){
               update += 1;
               if (document.querySelector("x-layers-canvas") != void 0) {
                 let size = stylescon()
-                document.querySelector("x-layers-container > div").style = size
-                document.querySelector("x-layers-canvas").style = styles[update % 3]
+                document.querySelector("x-layers-container > div").style = size[0]
+                document.querySelector("x-layers-canvas").style = size[1]
               }
           }
           setTimeout(updatefnc, 2000);
@@ -71,10 +100,6 @@
       </script>
 </div>
 <ul class="w3lsg-bubbles">
-  <li></li>
-  <li></li>
-  <li></li>
-  <li></li>
   <li></li>
   <li></li>
   <li></li>

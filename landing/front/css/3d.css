@@ -7,10 +7,13 @@ x-layers-container.sc-x-layers{
    background-color: rgba(0, 0, 0, 0);
    background-image: none;
 }
+x-layers-container.sc-x-layers {
+  border : none
+}
 
 x-layers {
        --x-layers-width:100vw;
-       --x-layers-height: 100vh;
+       --x-layers-height: calc(100vh - 100px);
        width: var(--x-layers-width);
        height: var(--x-layers-height);
        margin: 0 auto;
