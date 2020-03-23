@@ -63,7 +63,7 @@
               }
             }
             res = "transform: scale(" + size + ", " + size + ");"
-            s = [[-80, -20, 30], [-125, -60, 50], [-250, -120, 100]]
+            s = [[-80, -20, 50], [-125, -60, 60], [-250, -120, 120]]
             for (var i = s.length; i > 0; i--){
               if (win > (i - 1) * 330){
                 left = s[i - 1][update % 3]
@@ -79,7 +79,7 @@
             var styles = [
                           "margin-top: " + (180 + top)+ "px; transform: rotateY(60deg) rotateX(20deg)",
                           "margin-top: " + (200 + top)+ "px; transform: rotateY(0deg) rotateX(25deg)",
-                          "margin-left: 150px; margin-top: " + (200 + top)+ "px; margin-top: -80px; transform: rotateY(-60deg) rotateX(-20deg)"
+                          "margin-top: " + (200 + top)+ "px; margin-top: -80px; transform: rotateY(-60deg) rotateX(-20deg)"
                          ][update % 3]
                          console.log(styles, update % 3);
             return [res, styles];

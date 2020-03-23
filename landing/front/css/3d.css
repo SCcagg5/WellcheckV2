@@ -10,6 +10,14 @@ x-layers-container.sc-x-layers{
 x-layers-container.sc-x-layers {
   border : none
 }
+@media (max-width: 800px) {
+  .w3lsg-bubbles {
+    display:none;
+  }
+  x-layers-container.sc-x-layers{
+     background-color: white;
+  }
+}
 
 x-layers {
        --x-layers-width:100vw;
