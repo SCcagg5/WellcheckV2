@@ -415,7 +415,8 @@ function sendata(){
         url: './post.php',
         data: {email: document.querySelector("#email").value, message: document.querySelector("#message").value},
         success: function(data) {
-          //success code
+          document.querySelector("#email").value = "";
+          document.querySelector("#message").value = ""
         }
       });
 }

@@ -104,6 +104,7 @@ services:
       container_name: php
       volumes:
         - ./landing/front:/script:ro
+        - ./admin/services/contact:/result
       networks:
         - proxy
 
