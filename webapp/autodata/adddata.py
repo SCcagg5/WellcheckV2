@@ -114,10 +114,10 @@ for i in points:
     ph = upval(ph, 0.2, 1, 12.8, 0)
     turbidity = data["turbidity"] if "turbidity" in data else 1000
     turbidity = upval(turbidity, 4, 0, 1024, 0, 5)
-    orp = data["turbidity"] if "turbidity" in data else 300
-    orp = upval(orp, 2, 1, 400, 220)
+    redox = data["redox"] if "redox" in data else 300
+    redox = upval(redox, 2, 1, 400, 220)
     temp = data["temp"] if "temp" in data else 5
-    temp = upval(temp, 0.1, 1, 25, 1)
+    temp = upval(temp, 0.3, 1, 25, 1)
     input={
         "id_sig": ret[str(i)][0]['id_sig'],
         "id_point": i,
@@ -125,9 +125,9 @@ for i in points:
            'data': {
                "ph": ph,
                "turbidity": turbidity,
-               "orp": orp,
+               "redox": redox,
                "temp": temp,
-               "note": note(ph, turbidity, orp, temp)
+               "note": note(ph, turbidity, redox, temp)
            },
            'pos': {
                'lon': ret[str(i)][0]['data']['pos']['lon'],
