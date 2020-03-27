@@ -64,6 +64,20 @@ services:
        DB_PASS: ${DB_PASS}
        STRIPE_PRIV: ${STRIPE_PRIV}
 
+   autodata:
+     build: ./webapp/autodata
+     container_name: autodata
+     tty: true
+     stdin_open: true
+     depends_on:
+       - bck-end
+     networks:
+       - db-net
+     environment:
+       DB_USER: ${DB_USER}
+       DB_PASS: ${DB_PASS}
+       CRON_SCHEDULE: "*/15 * * * *"
+
    landing:
       image: nginx
       container_name: landing
