@@ -4,15 +4,59 @@ let container = {
     }
   },
 
-  props: {name: {default: ''}, hover: {default: false}, warning: {default: false}, note: {default: void 0}},
+  props: {name: {default: ''}, hover: {default: false}, warning: {default: false}, note: {default: void 0}, fullscreen: {default: false}, outside: {default: false}, border: {default: true}},
   components: { warning },
   methods: {
     display: function(){
+    },
+    full: function(){
+      if (document.querySelector(".main")) {
+        document.querySelector(".main").style.overflow = "visible"
+        document.querySelector(".main").style.height= "100px";
+      }
+      if (this.$el.style.position == "absolute")
+        return this.close()
+      var a = this.$el, b = 0, c = 0;
+      while (a) {
+          b += a.offsetLeft;
+          c += a.offsetTop;
+          a = a.offsetParent;
+      }
+        b -= 2;
+        c += 2;
+      this.$el.style.transition = "0.5s";
+      this.$el.style.position = "absolute";
+      if (this.outside + "" == 'true'){
+        c += 3;
+      }
+      this.$el.style.left = "-" + b + "px";
+      this.$el.style.top = "-" + c + "px";
+      this.$el.style.height = "100vh";
+      this.$el.style.width = "calc(100vw + 15px)";
+      this.$el.style.zIndex = "2";
+      this.$el.style.borderRadius = "unset";
+      window.addEventListener('resize', this.close);
+    },
+    close: function(){
+      if (document.querySelector(".main")) {
+        document.querySelector(".main").style.overflow = "";
+        document.querySelector(".main").style.height= "";
+      }
+      window.removeEventListener('resize', this.close);
+      this.$el.style.transition = "";
+      this.$el.style.position = "";
+      this.$el.style.left = "";
+      this.$el.style.top = "";
+      this.$el.style.height = "100%";
+      this.$el.style.width = "";
+      this.$el.style.zIndex = "";
+      this.$el.style.borderRadius = "";
     }
   },
 
   template:`
-  <div class='cont' :class="this.hover ? 'cont-hover' : ''" >
+  <div class='cont' :class="this.hover + '' == 'true' ? 'cont-hover' : ''" :style="this.border + '' != 'true' ? 'border: none' : ''">
+    <div v-if="this.fullscreen + '' == 'true'" v-on:click="full()" style="position: static; margin-top: -18px; margin-left: calc(100% - -1px); cursor: pointer;font-size: 0.8rem">╳</div>
     <div class='title-cont'>
        <warning :display=warning note="Oops, it look's like you got difficulties loading this item"></warning>
        {{ this.name }}
@@ -27,6 +71,7 @@ let container = {
         </div>
 
     </div>
+
     <slot>
     </slot>
   <div>`

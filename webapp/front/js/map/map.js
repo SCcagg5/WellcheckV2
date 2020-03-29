@@ -62,13 +62,13 @@ let vm = new Vue({
                     Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
                   </div>
                   <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
-                  Note: ` + (this.markers['proprietary'][i]['note'] ? this.markers['proprietary'][i]['note'] : '_' ) + ` / 10
+                  Note: ` + (this.markers['proprietary'][i]["data"][0]['note'] ? this.markers['proprietary'][i]["data"][0]['note'] : '_' ) + ` / 10
                   <div class="notebarholder">
                     <div class="notebar" style=" ` + (
-                        this.markers['proprietary'][i]['note'] ?
-                        this.markers['proprietary'][i]['note'] > 7 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]['note'] * 10) + '%;' :
-                        this.markers['proprietary'][i]['note'] > 4 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]['note'] * 10) + '%;' :
-                        'background-color: red; width: ' + (this.markers['proprietary'][i]['note'] * 10) + '%;' : 'width: 0%' ) + `">
+                        this.markers['proprietary'][i]["data"][0]['note'] ?
+                        this.markers['proprietary'][i]["data"][0]['note'] > 7 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
+                        this.markers['proprietary'][i]["data"][0]['note'] > 4 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
+                        'background-color: red; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' : 'width: 0%' ) + `">
                     </div>
                   </div>
                   </div>

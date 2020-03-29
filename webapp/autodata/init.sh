@@ -4,8 +4,8 @@ if [ -z "${CRON_SCHEDULE}" ]; then
 fi
 
 # variables crond
-STDOUT_LOC=${STDOUT_LOC:-/data-logs/log.suc}
-STDERR_LOC=${STDERR_LOC:-/data-logs/log.err}
+STDOUT_LOC=${STDOUT_LOC:-/home/autodata/log.suc}
+STDERR_LOC=${STDERR_LOC:-/home/autodata/log.err}
 
 # settings crond
 echo -ne "# custom script for sending jokes\n${CRON_SCHEDULE} /usr/local/bin/python3 /home/autodata/adddata.py ${DB_USER} ${DB_PASS} > ${STDOUT_LOC} 2> ${STDERR_LOC}\n" | crontab -

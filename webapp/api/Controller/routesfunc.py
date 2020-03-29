@@ -232,6 +232,15 @@ def point_infos(cn, nextc):
                      )
     return cn.call_next(nextc, err)
 
+def point_graph(cn, nextc):
+    err = check.contain(cn.pr, ["id_point", "datas"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+
+    use = floteur(cn.private["user"].id)
+    err = use.graph_point(cn.pr["id_point"], cn.pr["datas"])
+    return cn.call_next(nextc, err)
+
 def points_shared(cn, nextc):
     use = floteur(cn.private["user"].id)
     err = use.my_shares()

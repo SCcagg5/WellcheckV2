@@ -22,6 +22,7 @@ def setuproute(app, call):
     @app.route('/point/rename/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_rename])              )
     @app.route('/point/infos/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_infos])               )
     @app.route('/points/infos/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, points_infos])              )
+    @app.route('/point/graph/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_graph])              )
     @app.route('/points/shared/',   ['OPTIONS', 'GET'],         lambda x = None: call([myauth, authuser, points_shared])             )
     @app.route('/data/add/',        ['OPTIONS', 'POST'],        lambda x = None: call([myauth, data_add])                            )
     def base():

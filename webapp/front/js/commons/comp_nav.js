@@ -52,7 +52,9 @@ let leftnav = {
         vm.$refs.modal.$refs.inside.update();
         console.log(vm.$refs.modal.$refs.inside.update());
       }
-      vm.testpointer(this.display_test);
+      if (vm.testpointer != void 0){
+        vm.testpointer(this.display_test);
+      }
     }
   },
   beforeMount(){
@@ -106,7 +108,8 @@ let leftnav = {
                   <div ref="link4" class="nav-text"  v-on:click="redirect('/map')"            >Map</div>
                   <div ref="link5" class="nav-text nav-second" v-on:click="modale('Devices')"    >Devices</div>
                   <div ref="link6" class="nav-text nav-second" v-on:click="modale('Share')"     >Share</div>
-                  <div ref="link7" class="nav-text" v-on:click="user.methods.logout"          >Logout</div>
+                  <div ref="link7" class="nav-text"  v-on:click="redirect('/stats')"            >Stats</div>
+                  <div ref="link8" class="nav-text" v-on:click="user.methods.logout"          >Logout</div>
                   <br>
                   <div ref="link8" class="nav-text test-nav">
                     <input id="s2d" type="checkbox" class="switch test-switch" v-on:click=changetest>

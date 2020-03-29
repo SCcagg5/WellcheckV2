@@ -128,6 +128,21 @@ class floteur:
         ret["data"] = res[str(id_point)] if str(id_point) in res else []
         return [True, ret, None]
 
+    def graph_point(self, id_point, datas):
+        if not isinstance(datas, list):
+            return [False, "Datas should be a list", 400]
+        basetime = int(time.time() * 1000)
+        ret = {}
+        ret["chart1"] = self.__graph(id_point, ["note"], basetime - 172800000, basetime)["note"]
+        ret["chart2"] = self.__graph(id_point, datas, basetime - 172800000, basetime)
+        ret["chart3"] = self.__graph(id_point, datas)
+        res = {"label": [], "data": []}
+        for i in ret["chart1"]["data"]:
+            res["label"].append(i["t"])
+            res["data"].append(i["y"])
+        ret["chart1"]["data"] = res
+        return [True, ret, None]
+
     def adddata(self, data, id_sig, id_point):
         id_sig = self.__hash(id_sig)
         id_point = id_point
@@ -210,6 +225,77 @@ class floteur:
                 ret = []
                 for i in res:
                     ret.append(i[0])
+        return ret
+
+    def __graph(self, id_point, datas, date_start = None, date_end = None,limit = None):
+        id_point = [id_point]
+        range = {"from": "0"}
+        if date_start:
+            range["from"] = str(date_start)
+        if date_end:
+            range["to"] = str(date_end)
+        limit = limit if limit else 10000000
+        query = {
+          "size": -1,
+          "aggs" : {
+            "date_range" : {
+              "range" : { "field" : "date", "ranges" : [range]},
+              "aggs": {
+                "dedup" : {
+                  "filter": {"terms": {"id_point": id_point}},
+                      "aggs": {
+                        "dedup" : {
+                          "terms":{"field": "id_point"},
+                          "aggs": {
+                            "top_sales_hits": {
+                              "top_hits": {
+                                "sort": [{"date": {"order": "desc"}}],
+                                "_source": {"includes": [ "date", "data" ]},
+                                "size" : limit
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                }
+            }
+          }
+        }
+        es.indices.refresh(index="point_test")
+        res = es.search(index="point_test", body=query)
+        ret = {}
+        for i in datas:
+            ret[i] = []
+        for i in res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]:
+            for i2 in i["top_sales_hits"]["hits"]["hits"]:
+                for i in datas:
+                    if ("date" in i2["_source"] and i in i2["_source"]["data"]["data"]):
+                        ret[i].append({"t": int(i2["_source"]["date"]), "y": float(i2["_source"]["data"]["data"][i])})
+        res = ret
+        ret = {}
+        model = {
+        "ph": {"max_x" : 8, "min_x": 6, "opt": {"high": 7.6, "low": 6.2}},
+        "note": {"max_x" : 19, "min_x": 0}
+        }
+        for i in datas:
+            opt = []
+            max_y = res[i][0]["t"]
+            min_y = res[i][len(res[i]) - 1]["t"]
+            max_x = res[i][0]["y"]
+            min_x = res[i][0]["y"]
+            if i in model:
+                max_x = model[i]["max_x"] if "max_x" in model[i] else max_x
+                min_x = model[i]["min_x"] if "min_x" in model[i] else min_x
+                max_y = model[i]["max_y"] if "max_y" in model[i] else max_y
+                min_y = model[i]["min_y"] if "min_y" in model[i] else min_y
+                opt   = model[i]["opt"]   if "opt"   in model[i] else opt
+            for i2 in res[i]:
+                if   i2["y"] > max_x:
+                    max_x =  i2["y"]
+                elif i2["y"] < min_x:
+                    min_x =  i2["y"]
+            ret[i] = { "data": res[i], "limits": {"y": {"min": min_y, "max": max_y}, "x": {"min": min_x - 1 if min_x >= 1 else 0, "max": max_x + 1}, "opt": opt}}
         return ret
 
     def __infos_query(self, id_points, date_start = None, date_end = None, limit = None):

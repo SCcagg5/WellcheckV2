@@ -1557,3 +1557,20 @@ font-size: 21px;
 	height: 10px;
 	background-color: grey;
 }
+
+#vuestats {
+	overflow-y: scroll;
+}
+
+.list-devices-stats {
+	position: relative;
+  display: block;
+  padding: 0 1rem;
+  background-color: #fff;
+  border: 1px solid rgba(150,150,150,.125);
+}
+
+.marge {
+	margin-top: 0.8rem;
+	margin-bottom: 0.8rem;
+}
