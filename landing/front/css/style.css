@@ -279,7 +279,7 @@ body {
   padding: 5px 30px;
   display: inline-block;
   text-transform: uppercase;
-  padding-right: 5px;
+  padding-right: 10px;
   text-decoration: none !important;
 }
 .gtco-banner-area a .fa, .gtco-feature a .fa, .gtco-features a .fa, .gtco-news .owl-carousel .card a .fa, #gtco-footer .submit-button .fa {
@@ -333,7 +333,7 @@ body {
 .gtco-banner-area a {
   display: inline;
   padding: 10px 30px;
-  padding-right: 5px;
+  padding-right: 10px;
 }
 .gtco-banner-area .col-md-6 .card .card-img-top {
   max-width: 430px;
