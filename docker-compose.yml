@@ -76,7 +76,7 @@ services:
      environment:
        DB_USER: ${DB_USER}
        DB_PASS: ${DB_PASS}
-       CRON_SCHEDULE: "* * * * *"
+       CRON_SCHEDULE: "*/15 * * * *"
 
    landing:
       image: nginx

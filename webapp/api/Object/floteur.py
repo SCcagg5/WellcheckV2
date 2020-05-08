@@ -4,6 +4,8 @@ from .sql import sql
 from .elastic import es
 import requests
 import hashlib
+import random
+from elasticsearch import helpers
 
 
 class floteur:
@@ -133,8 +135,8 @@ class floteur:
             return [False, "Datas should be a list", 400]
         basetime = int(time.time() * 1000)
         ret = {}
-        ret["chart1"] = self.__graph(id_point, ["note"], basetime - 172800000, basetime)["note"]
-        ret["chart2"] = self.__graph(id_point, datas, basetime - 172800000, basetime)
+        ret["chart1"] = self.__graph(id_point, ["note"], basetime - 86400000, basetime)["note"]
+        ret["chart2"] = self.__graph(id_point, datas, basetime - 86400000, basetime)
         ret["chart3"] = self.__graph(id_point, datas)
         res = {"label": [], "data": []}
         for i in ret["chart1"]["data"]:
@@ -142,6 +144,64 @@ class floteur:
             res["data"].append(i["y"])
         ret["chart1"]["data"] = res
         return [True, ret, None]
+
+    def upval(self, num, der, rou, max, min, mod = None):
+        randNbr = random.randrange(-der * 100, der * 100 + 1, mod * 100 if mod else 1)/100
+        if num + randNbr < min or num + randNbr > max:
+            randNbr *= -1
+        if rou != 0:
+            f = "{0:."+str(rou)+"f}"
+            ret = float(f.format(num + randNbr))
+        else:
+            ret = int(num + randNbr)
+        return ret
+
+    def note(self, ph, turb, orp, temp):
+        ph_point = 1.4*10**-32-29.3*ph+8.19*ph**2-0.56*ph**3
+        ph_point = 0 if float(ph_point) < float(0) else 5 if float(ph_point) > float(5) else ph_point
+        orp_point = -3.39*10**-32-0.0846*turb+6.73*10**-4*turb**2-1.12*10**-6*turb**3
+        orp_point = 0 if float(ph_point) < float(0) else 5 if float(ph_point) > float(5) else ph_point
+        temp_point = 5.83+0.235*temp-0.0241*temp**2
+        temp_point = 0 if float(orp_point) < float(0) else 6 if float(orp_point) > float(6) else orp_point
+        turb_point = 0 if float(turb) < float(921) else 3
+        return float("{0:.1f}".format(ph_point + orp_point + temp_point + turb_point))
+
+    def inputrandom(self, id_point, id_sig, data, date):
+        ph = 7
+        turbidity = 1000
+        redox = 300
+        temp = 5
+        datebis = date
+        inputs = []
+        for i in range(0, 1003):
+            ph = self.upval(ph, 0.2, 1, 12.8, 0)
+            turbidity = self.upval(turbidity, 4, 0, 1024, 0, 5)
+            redox = self.upval(redox, 2, 1, 400, 220)
+            temp = self.upval(temp, 0.3, 1, 25, 1)
+            datebis = datebis - 900000
+            inputs.append({
+              "_index": "point_test",
+              "_type": "_doc",
+              "_id": str(id_sig) + str(id_point) + str(i),
+              "_score": 1,
+              "_source": {
+                            "id_sig": id_sig,
+                            "id_point": id_point,
+                            'data': {
+                               'data': {
+                                   "ph": ph,
+                                   "turbidity": turbidity,
+                                   "redox": redox,
+                                   "temp": temp,
+                                   "note": self.note(ph, turbidity, redox, temp)
+                               },
+                               'pos': data["pos"]
+                               },
+                            "date": datebis
+                        }
+              })
+        helpers.bulk(es, inputs)
+        return inputs[0]
 
     def adddata(self, data, id_sig, id_point):
         id_sig = self.__hash(id_sig)
@@ -151,13 +211,16 @@ class floteur:
             return [False, "Missing index 'pos' inside data", 400]
         if "lon" not in data['pos'] or "lat" not in data['pos']:
             return [False, "Missing inbex 'lon' or 'lat' inside data.pos", 400]
-        input={
-            "id_sig": id_sig,
-            "id_point": id_point,
-            "data": data,
-            "date": date
-        }
-        res = es.index(index='point_test',body=input)
+        if data["data"] == -1:
+            input = self.inputrandom(id_point, id_sig, data, date)
+        else:
+            input={
+                "id_sig": id_sig,
+                "id_point": id_point,
+                "data": data,
+                "date": date
+            }
+            res = es.index(index='point_test',body=input)
         return [True, {"data_added": input}, None]
 
 
@@ -279,23 +342,26 @@ class floteur:
         "note": {"max_x" : 19, "min_x": 0}
         }
         for i in datas:
-            opt = []
-            max_y = res[i][0]["t"]
-            min_y = res[i][len(res[i]) - 1]["t"]
-            max_x = res[i][0]["y"]
-            min_x = res[i][0]["y"]
-            if i in model:
-                max_x = model[i]["max_x"] if "max_x" in model[i] else max_x
-                min_x = model[i]["min_x"] if "min_x" in model[i] else min_x
-                max_y = model[i]["max_y"] if "max_y" in model[i] else max_y
-                min_y = model[i]["min_y"] if "min_y" in model[i] else min_y
-                opt   = model[i]["opt"]   if "opt"   in model[i] else opt
-            for i2 in res[i]:
-                if   i2["y"] > max_x:
-                    max_x =  i2["y"]
-                elif i2["y"] < min_x:
-                    min_x =  i2["y"]
-            ret[i] = { "data": res[i], "limits": {"y": {"min": min_y, "max": max_y}, "x": {"min": min_x - 1 if min_x >= 1 else 0, "max": max_x + 1}, "opt": opt}}
+            if i in res and len(res[i]) > 0:
+                opt = []
+                max_y = res[i][0]["t"]
+                min_y = res[i][len(res[i]) - 1]["t"]
+                max_x = res[i][0]["y"]
+                min_x = res[i][0]["y"]
+                if i in model:
+                    max_x = model[i]["max_x"] if "max_x" in model[i] else max_x
+                    min_x = model[i]["min_x"] if "min_x" in model[i] else min_x
+                    max_y = model[i]["max_y"] if "max_y" in model[i] else max_y
+                    min_y = model[i]["min_y"] if "min_y" in model[i] else min_y
+                    opt   = model[i]["opt"]   if "opt"   in model[i] else opt
+                for i2 in res[i]:
+                    if   i2["y"] > max_x:
+                        max_x =  i2["y"]
+                    elif i2["y"] < min_x:
+                        min_x =  i2["y"]
+                ret[i] = { "data": res[i], "limits": {"y": {"min": min_y, "max": max_y}, "x": {"min": min_x - 1 if min_x >= 1 else 0, "max": max_x + 1}, "opt": opt}}
+            else:
+                ret[i] = {"data": [], "limits": {"y": {"min": 0, "max": 0}, "x": {"min":0, "max":0}, "opt": []}}
         return ret
 
     def __infos_query(self, id_points, date_start = None, date_end = None, limit = None):

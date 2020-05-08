@@ -109,11 +109,14 @@ class autodata:
         return to_ret
 
     def upval(num, der, rou, max, min, mod = None):
+        randNbr = random.randrange(-der * 100, der * 100 + 1, mod * 100 if mod else 1)/100
+        if num + randNbr < min or num + randNbr > max:
+            randNbr *= -1
         if rou != 0:
             f = "{0:."+str(rou)+"f}"
-            ret = float(f.format(num + random.randrange(-der * 100, der * 100, mod * 100 if mod else 1)/100))
+            ret = float(f.format(num + randNbr))
         else:
-            ret = int(num + random.randrange(-der * 100, der * 100, mod * 100 if mod else 1)/100)
+            ret = int(num + randNbr)
         return ret
 
     def note(ph, turb, orp, temp):

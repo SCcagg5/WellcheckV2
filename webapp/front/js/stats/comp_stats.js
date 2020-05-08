@@ -135,9 +135,9 @@ methods: {
             }],
             xAxes: [{
               type: 'time',
+              distribution: 'series',
               time: {
                 parser: timeFormat,
-                // round: 'day'
                 tooltipFormat: 'll HH:mm'
               },
               scaleLabel: {
@@ -207,9 +207,6 @@ methods: {
 				}]
 			},
 			options: {
-        animation: {
-					duration: 0
-				},
         legend: {
           position: 'top',
           display: false,
@@ -284,9 +281,6 @@ methods: {
           position: 'top',
           display: false,
         },
-				animation: {
-					duration: 0
-				},
 				scales: {
 					xAxes: [{
 						type: 'time',
@@ -346,7 +340,8 @@ methods: {
     	"datas": [this.received[0]]
     }
     this.received[1] = 0
-    user.methods.send('point/graph', data, this.store);
+    if (id != void 0)
+      user.methods.send('point/graph', data, this.store);
   },
 
   store: function(data) {
@@ -422,7 +417,8 @@ template: `
                           <div class="row">
                             <div class="ml-1 mr-0"style="text-align: left"> {{ point.surname }}</div>
                             <div v-if="selected[0] == point.id" class="ml-1 mr-0"style="text-align: left; color: #1C94FE"> &#10004</div>
-                            <div class="ml-auto mr-1 datelist"> Up. {{ point.data[0].date | tostr }} min ago</div>
+                            <div v-if="point.data[0]" class="ml-auto mr-1 datelist"> Up. {{ point.data[0].date  | tostr }} min ago</div>
+                            <div v-if="!point.data[0]" class="ml-auto mr-1 datelist"> No data </div>
                           </div>
                         </li>
                       </ul>
@@ -432,7 +428,7 @@ template: `
                   <div class="row">
                   <div class="col-lg-5 col-sm-12 marge" style="height: inherit;">
                   <container note="Your consomption for this month, it may take up to 10 hours to update"
-                             :name="'48H - ' + selected[1] + ' score'"
+                             :name="'24H - ' + selected[1] + ' score'"
                              hover=true style="height: 100%">
                              <canvas class="marge" id="chart1" width="5" height="3" style="display: block; height: 300px; width: 1000px;" class="chartjs-render-monitor"></canvas>
                   </container>
@@ -465,7 +461,7 @@ template: `
                   <div class="row">
                   <div class="col-lg-12 col-sm-12 marge">
                     <container note="Your consomption for this month, it may take up to 10 hours to update"
-                               :name="'48H - ' + selected[1] + ' - PH'"
+                               :name="'24H - ' + selected[1] + ' - PH'"
                                hover=false
                                border=false
                                fullscreen=true

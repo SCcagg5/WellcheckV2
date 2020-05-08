@@ -71,9 +71,7 @@ let compModDevices = {
             data['headers'] = cred.methods.get_headers()
             data['data'] = {
               "data": {
-              	"data": {
-
-                },
+              	"data": -1,
               	"pos": {"lon": map.getCenter().lng(), "lat": map.getCenter().lat()}
               },
               "point_id": this.points['proprietary'][i]['id'],

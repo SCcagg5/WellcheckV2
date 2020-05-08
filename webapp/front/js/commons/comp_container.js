@@ -24,7 +24,7 @@ let container = {
       }
         b -= 2;
         c += 2;
-      this.$el.style.transition = "0.5s";
+      this.$el.style.transition = "0s";
       this.$el.style.position = "absolute";
       if (this.outside + "" == 'true'){
         c += 3;

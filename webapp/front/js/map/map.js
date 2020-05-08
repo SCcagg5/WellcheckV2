@@ -29,55 +29,57 @@ let vm = new Vue({
         var test;
         var last_data;
         for (var i = 0; i < this.markers['proprietary'].length; i++){
-          test = this.markers['proprietary'][i]["test"]
-          last_data = this.markers['proprietary'][i]["data"][0]
-          this.markers['proprietary'][i]["marker"]
-            = new google.maps.Marker({
-                position: new google.maps.LatLng(last_data['data']['pos']['lat'], last_data['data']['pos']['lon']),
-                title:this.markers['proprietary'][i]["name"],
-                map: test == true && (localStorage.testmode == "false" || localStorage.testmode == void 0) ? null :  map,
-                data: {'id': this.markers['proprietary'][i]['id'], 'order': i},
-                icon: {
-                    url: test == true ? "./imgs/float_test.svg" : "./imgs/float.svg", // url
-                    scaledSize: new google.maps.Size(35, 35), // scaled size
-                    origin: new google.maps.Point(0,0), // origin
+          if (this.markers['proprietary'][i]["data"].length > 0) {
+            test = this.markers['proprietary'][i]["test"]
+            last_data = this.markers['proprietary'][i]["data"][0]
+            this.markers['proprietary'][i]["marker"]
+              = new google.maps.Marker({
+                  position: new google.maps.LatLng(last_data['data']['pos']['lat'], last_data['data']['pos']['lon']),
+                  title:this.markers['proprietary'][i]["name"],
+                  map: test == true && (localStorage.testmode == "false" || localStorage.testmode == void 0) ? null :  map,
+                  data: {'id': this.markers['proprietary'][i]['id'], 'order': i},
+                  icon: {
+                      url: test == true ? "./imgs/float_test.svg" : "./imgs/float.svg", // url
+                      scaledSize: new google.maps.Size(35, 35), // scaled size
+                      origin: new google.maps.Point(0,0), // origin
 
-                }
-          });
-          this.markers['proprietary'][i]['note'] = 3
-          this.markers['proprietary'][i]["infos"] = new google.maps.InfoWindow({
-            content: `<div class="inf-content" style="font-size: 15px;">
-              <div class="container">
-                <div class="row">
-                  <div class="col-12 col-sm-6" style="margin-top: 5px;">
-                    Name: ` + this.markers['proprietary'][i]['name'] + `
-                  </div>
-                  <div class="col-12 col-sm-6" style="margin-top: 5px;">
-                    Surname: ` + this.markers['proprietary'][i]['surname'] + `
-                  </div>
-                  <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
-                    Since: ` + this.datestr(this.markers['proprietary'][i]['date']) + `
-                  </div>
-                  <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
-                    Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
-                  </div>
-                  <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
-                  Note: ` + (this.markers['proprietary'][i]["data"][0]['note'] ? this.markers['proprietary'][i]["data"][0]['note'] : '_' ) + ` / 10
-                  <div class="notebarholder">
-                    <div class="notebar" style=" ` + (
-                        this.markers['proprietary'][i]["data"][0]['note'] ?
-                        this.markers['proprietary'][i]["data"][0]['note'] > 7 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
-                        this.markers['proprietary'][i]["data"][0]['note'] > 4 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
-                        'background-color: red; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' : 'width: 0%' ) + `">
+                  }
+            });
+            this.markers['proprietary'][i]['note'] = 3
+            this.markers['proprietary'][i]["infos"] = new google.maps.InfoWindow({
+              content: `<div class="inf-content" style="font-size: 15px;">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-12 col-sm-6" style="margin-top: 5px;">
+                      Name: ` + this.markers['proprietary'][i]['name'] + `
                     </div>
-                  </div>
-                  </div>
+                    <div class="col-12 col-sm-6" style="margin-top: 5px;">
+                      Surname: ` + this.markers['proprietary'][i]['surname'] + `
+                    </div>
+                    <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
+                      Since: ` + this.datestr(this.markers['proprietary'][i]['date']) + `
+                    </div>
+                    <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
+                      Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
+                    </div>
+                    <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
+                    Note: ` + (this.markers['proprietary'][i]["data"][0]['note'] ? this.markers['proprietary'][i]["data"][0]['note'] : '_' ) + ` / 10
+                    <div class="notebarholder">
+                      <div class="notebar" style=" ` + (
+                          this.markers['proprietary'][i]["data"][0]['note'] ?
+                          this.markers['proprietary'][i]["data"][0]['note'] > 7 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
+                          this.markers['proprietary'][i]["data"][0]['note'] > 4 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
+                          'background-color: red; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' : 'width: 0%' ) + `">
+                      </div>
+                    </div>
+                    </div>
 
+                  </div>
                 </div>
-              </div>
-            </div>`,
-            map: map
-          });
+              </div>`,
+              map: map
+            });
+          }
         }
         setTimeout(() => {this.setmarkers()}, 500);
         for (var i = 0; i< this.markers['shared'].length; i++){
@@ -140,9 +142,11 @@ let vm = new Vue({
 
       setmarkers: function(){
         for (var i = 0; i < this.markers['proprietary'].length; i++){
-          this.markers['proprietary'][i]["marker"].addListener('click', function() {
-            vm.moveto(this.data['id']);
-          }, false);
+          if (this.markers['proprietary'][i]["data"].length > 0) {
+            this.markers['proprietary'][i]["marker"].addListener('click', function() {
+              vm.moveto(this.data['id']);
+            }, false);
+          }
         }
       },
 
