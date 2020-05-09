@@ -1,6 +1,11 @@
 Vue.component('compModDevices', compModDevices);
 Vue.component('compModShare', compModShare);
 Vue.component('compModAdd_a_device', compModAdd_a_device);
+Vue.use(VueGoogleMaps, {
+  load: {key: 'AIzaSyDbGl0_XwDOzKEqu-CrXstGvjlTbsNXNTs',libraries: 'places'},
+  autobindAllEvents: false,
+  installComponents: true
+})
 
 
 let vm = new Vue({
@@ -9,7 +14,19 @@ let vm = new Vue({
     data: function(){
       return {
         email: localStorage.email,
-        markers: null
+        markers: null,
+        infoWindowPos: null,
+        infoWinOpen: false,
+        currentMidx: null,
+        testmode: localStorage.testmode,
+        infoOptions: {
+        content: '',
+          //optional: offset infowindow so it visually sits nicely on top of our marker
+          pixelOffset: {
+            width: 0,
+            height: -35
+          }
+        },
       }
     },
 
@@ -30,123 +47,75 @@ let vm = new Vue({
         var last_data;
         for (var i = 0; i < this.markers['proprietary'].length; i++){
           if (this.markers['proprietary'][i]["data"].length > 0) {
-            test = this.markers['proprietary'][i]["test"]
             last_data = this.markers['proprietary'][i]["data"][0]
-            this.markers['proprietary'][i]["marker"]
-              = new google.maps.Marker({
-                  position: new google.maps.LatLng(last_data['data']['pos']['lat'], last_data['data']['pos']['lon']),
-                  title:this.markers['proprietary'][i]["name"],
-                  map: test == true && (localStorage.testmode == "false" || localStorage.testmode == void 0) ? null :  map,
-                  data: {'id': this.markers['proprietary'][i]['id'], 'order': i},
-                  icon: {
-                      url: test == true ? "./imgs/float_test.svg" : "./imgs/float.svg", // url
-                      scaledSize: new google.maps.Size(35, 35), // scaled size
-                      origin: new google.maps.Point(0,0), // origin
-
-                  }
-            });
             this.markers['proprietary'][i]['note'] = 3
-            this.markers['proprietary'][i]["infos"] = new google.maps.InfoWindow({
-              content: `<div class="inf-content" style="font-size: 15px;">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-12 col-sm-6" style="margin-top: 5px;">
-                      Name: ` + this.markers['proprietary'][i]['name'] + `
-                    </div>
-                    <div class="col-12 col-sm-6" style="margin-top: 5px;">
-                      Surname: ` + this.markers['proprietary'][i]['surname'] + `
-                    </div>
-                    <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
-                      Since: ` + this.datestr(this.markers['proprietary'][i]['date']) + `
-                    </div>
-                    <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
-                      Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
-                    </div>
-                    <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
-                    Note: ` + (this.markers['proprietary'][i]["data"][0]['note'] ? this.markers['proprietary'][i]["data"][0]['note'] : '_' ) + ` / 10
-                    <div class="notebarholder">
-                      <div class="notebar" style=" ` + (
-                          this.markers['proprietary'][i]["data"][0]['note'] ?
-                          this.markers['proprietary'][i]["data"][0]['note'] > 7 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
-                          this.markers['proprietary'][i]["data"][0]['note'] > 4 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' :
-                          'background-color: red; width: ' + (this.markers['proprietary'][i]["data"][0]['note'] / 19 * 10) + '%;' : 'width: 0%' ) + `">
+            this.markers['proprietary'][i]["marker"] = {
+                  position: {
+                              lat: last_data['data']['pos']['lat'],
+                              lng: last_data['data']['pos']['lon']
+                            },
+                  title:this.markers['proprietary'][i]["name"],
+                  data: {'id': this.markers['proprietary'][i]['id'], 'order': i, 'test': this.markers['proprietary'][i]["test"]},
+                  icon: {
+                      url: this.markers['proprietary'][i]["test"] == true ? "./imgs/float_test.svg" : "./imgs/float.svg", // url
+                      scaledSize: {height: 35, i: undefined, j: undefined, width: 35}, // scaled size
+                      origin: {x: 0, y: 0} // origin
+
+                  },
+                  infoText:  `<div class="inf-content" style="font-size: 15px;">
+                    <div class="container">
+                      <div class="row">
+                        <div class="col-12 col-sm-6" style="margin-top: 5px;">
+                          Name: ` + this.markers['proprietary'][i]['name'] + `
+                        </div>
+                        <div class="col-12 col-sm-6" style="margin-top: 5px;">
+                          Surname: ` + this.markers['proprietary'][i]['surname'] + `
+                        </div>
+                        <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
+                          Since: ` + this.datestr(this.markers['proprietary'][i]['date']) + `
+                        </div>
+                        <div class="col-12 col-sm-6" style="font-size: 11px;margin-top: 5px;">
+                          Last report: ` + (this.markers['proprietary'][i]['data'].length > 0 ? this.datestr(this.markers['proprietary'][i]['data'][0]["date"]) : '/' ) + `
+                        </div>
+                        <div class="col-12 col-sm-12" style="text-align: center; margin-top: 5px;">
+                        Note: ` + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] ? this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] : '_' ) + ` / 20
+                        <div class="notebarholder">
+                          <div class="notebar" style=" ` + (
+                              this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] ?
+                              this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] > 15 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] * 5) + '%;' :
+                              this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] > 10 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] * 5) + '%;' :
+                              'background-color: red; width: ' + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] * 5) + '%;' : 'width: 0%' ) + `">
+                          </div>
+                        </div>
+                        </div>
                       </div>
                     </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>`,
-              map: map
-            });
+                  </div>`
+                };
           }
-        }
-        setTimeout(() => {this.setmarkers()}, 500);
-        for (var i = 0; i< this.markers['shared'].length; i++){
-
         }
 
       },
-
-      testpointer: function(print){
-        for (var i = 0; i < this.markers['proprietary'].length; i++){
-          if (this.markers['proprietary'][i]['test'] == true ) {
-            if (print == false){
-              this.markers['proprietary'][i]["marker"].setMap(null);
-              this.markers['proprietary'][i]["infos"].close()
-            } else {
-              this.markers['proprietary'][i]["marker"].setMap(map);
-            }
-          }
-        }
+      testpointer: function(d){
+        this.testmode = d + "";
+        console.log(this.currentMidx)
+        if ((this.testmode == "false" || this.testmode == void 0) && this.currentMidx != void 0 && this.markers['proprietary'][this.currentMidx].test == true) {
+          this.infoWinOpen = false;
+       } else if (this.testmode == "true" && this.currentMidx != void 0 && this.markers['proprietary'][this.currentMidx].test == true) {
+         this.infoWinOpen = true;
+       }
       },
 
-      moveto: function(id, marker = null, force = false){
-        var done = false;
-        if (marker != null){
-          done = true
+      toggleInfoWindow: function(marker, idx) {
+        m = marker.marker
+        this.infoWindowPos = m.position;
+        this.infoOptions.content = m.infoText;
+        if (this.currentMidx == idx) {
+          this.infoWinOpen = !this.infoWinOpen;
         }
-        for (var i = 0; !done && i < this.markers['proprietary'].length; i++){
-          if (this.markers['proprietary'][i]['id'] == id){
-            marker = this.markers['proprietary'][i]
-            done = true;
-          }
-        }
-        for (var i = 0; !done && i < this.markers['shared'].length; i++){
-          if (this.markers['shared'][i]['id'] == id){
-            marker = this.markers['shared'][i];
-            done = true;
-          }
-        }
-        if (done == true) {
-          if (force == true){
-            if (map.getZoom() < 8){
-              map.setZoom(8);
-            }
-            map.panTo(marker['marker'].getPosition());
-          }
-
-
-          for (var i = 0; i < this.markers['shared'].length; i++){
-            this.markers['shared'][i]['infos'].close();
-          }
-          for (var i = 0; i < this.markers['proprietary'].length; i++){
-            this.markers['proprietary'][i]['infos'].close();
-          }
-          marker['infos'].open(map, marker['marker']);
-          let center = map.getCenter();
-          let pos = {'lat': center.lat(), 'lng': center.lng(), 'zoom': map.getZoom()};
-          localStorage.position = JSON.stringify(pos);
-        }
-      },
-
-      setmarkers: function(){
-        for (var i = 0; i < this.markers['proprietary'].length; i++){
-          if (this.markers['proprietary'][i]["data"].length > 0) {
-            this.markers['proprietary'][i]["marker"].addListener('click', function() {
-              vm.moveto(this.data['id']);
-            }, false);
-          }
+        else {
+          this.infoWinOpen = true;
+          this.currentMidx = idx;
         }
       },
 
@@ -181,7 +150,7 @@ let vm = new Vue({
                 	"data": {
 
                   },
-                	"pos": {"lon": map.getCenter().lng(), "lat": map.getCenter().lat()}
+                	"pos": {"lon": this.$refs.main.getCenter().lng(), "lat": this.$refs.main.getCenter().lat()}
                 },
                 "point_id": this.markers['proprietary'][i]['id'],
                 "sig_id": -1
@@ -195,6 +164,25 @@ let vm = new Vue({
    mounted(){
      cred.methods.api_cred()
      cred.methods.usr_cred()
-     this.infos();
+     this.$refs.main.$mapPromise.then((map) => {
+       if (localStorage.position != null) {
+         let position = JSON.parse(localStorage.position);
+         map.setCenter({lat:position['lat'], lng:position['lng']});
+         map.setZoom(position['zoom']);
+       }
+       this.$refs.main.$on('zoom_changed', function(){
+         let center = map.getCenter();
+         let pos = {'lat': center.lat(), 'lng': center.lng(), 'zoom': map.getZoom()};
+         localStorage.position = JSON.stringify(pos);
+       });
+       this.$refs.main.$on('dragend', function(){
+         let center = map.getCenter();
+         let pos = {'lat': center.lat(), 'lng': center.lng(), 'zoom': map.getZoom()};
+         localStorage.position = JSON.stringify(pos);
+       });
+       this.infos();
+       console.log(VueGoogleMaps.gmapApi())
+     })
+
    }
 })

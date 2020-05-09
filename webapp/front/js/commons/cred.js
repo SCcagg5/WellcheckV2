@@ -2,6 +2,7 @@ let cred = {
   methods: {
     usr_cred: function() {
       let actual = window.location.href.split(address)[1]
+      console.log((localStorage.usrtoken && this.checktime("usrtoken")));
       if (localStorage.usrtoken && this.checktime("usrtoken")) {
         let location = localStorage.location ?  localStorage.location  : redirect;
         loc.methods.redirect(location);

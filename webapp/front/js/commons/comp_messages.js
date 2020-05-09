@@ -18,7 +18,8 @@ let msg = {
     check: function (data, callback, redirect = true, message = false){
       if (data.status != 200){
         if (data.error == 'Invalid token'){
-          cred.methods.api_cred(true);
+          console.log(data)
+          //cred.methods.api_cred(true);
         } else if (data.error == 'Invalid usrtoken') {
           user.methods.logout();
         }

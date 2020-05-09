@@ -34,6 +34,7 @@
       ?>
       <a onclick="switchiframe('./elastic/')" class="list-group-item list-group-item-action bg-light">Elasticsearch</a>
       <a onclick="switchiframe('./phpmyadmin/')" class="list-group-item list-group-item-action bg-light">SQL</a>
+      <a onclick="switchiframe('./contact/')" class="list-group-item list-group-item-action bg-light">Contacts</a>
     </div>
   </div>
   <!-- /#sidebar-wrapper -->
@@ -55,7 +56,7 @@
               Liens
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">Github</a>
+              <a class="dropdown-item" href="https://github.com/SCcagg5/WellcheckV2">Github</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="wellcheck.fr">Landing</a>
               <a class="dropdown-item" href="dashboard.wellcheck.fr">Dashboard</a>

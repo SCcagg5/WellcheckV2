@@ -62,6 +62,7 @@ services:
       volumes:
         - ./admin/front:/script:ro
         - ./admin/services/goaccess/front:/stats:ro
+        - ./admin/services/contact:/contact:ro
       networks:
         - proxy
 
