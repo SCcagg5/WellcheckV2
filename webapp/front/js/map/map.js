@@ -145,12 +145,11 @@ let vm = new Vue({
             if (this.markers['proprietary'][i]['test'] == true && this.markers['proprietary'][i]['data'].length == 0){
               let data = {}
               data['headers'] = cred.methods.get_headers()
+              console.log(this.$refs.main);
               data['data'] = {
                 "data": {
-                	"data": {
-
-                  },
-                	"pos": {"lon": this.$refs.main.getCenter().lng(), "lat": this.$refs.main.getCenter().lat()}
+                	"data": -1,
+                	"pos": {"lon": this.$refs.main.$mapObject.center.lng(), "lat": this.$refs.main.$mapObject.center.lat()}
                 },
                 "point_id": this.markers['proprietary'][i]['id'],
                 "sig_id": -1
@@ -181,7 +180,6 @@ let vm = new Vue({
          localStorage.position = JSON.stringify(pos);
        });
        this.infos();
-       console.log(VueGoogleMaps.gmapApi())
      })
 
    }

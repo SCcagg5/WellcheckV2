@@ -16,8 +16,10 @@ let compModBilling = {
       }
       if (result.token != void 0) {
         let data = {}
-        data['headers'] = cred.methods.get_headers()
-        data['data'] = {}
+        data['headers'] = cred.methods.get_headers();
+        data['data'] = {
+	  'crd_token': result.token.id
+	}
         user.methods.send('addcard', data, this.getcards);
       }
     },

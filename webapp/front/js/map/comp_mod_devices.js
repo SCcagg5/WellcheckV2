@@ -72,7 +72,7 @@ let compModDevices = {
             data['data'] = {
               "data": {
               	"data": -1,
-              	"pos": {"lon": map.getCenter().lng(), "lat": map.getCenter().lat()}
+              	"pos": {"lon": vm.$refs.main.$mapObject.center.lng(), "lat": vm.$refs.main.$mapObject.center.lat()}
               },
               "point_id": this.points['proprietary'][i]['id'],
               "sig_id": -1
@@ -97,7 +97,7 @@ let compModDevices = {
               </br>
               <div class="col-md-1 hidesms"></div>
               <ul class='list-group col-12 sm-modalelist' style="overflow-x: hidden">
-                  <li v-for="point in points.proprietary" v-if="point.test == false || point.test == true && display_test == true" v-on:click="vm.moveto(point.id, null, true)" class="list-group-item list-group-item-action">
+                  <li v-for="point in points.proprietary" v-if="point.test == false || point.test == true && display_test == true"  class="list-group-item list-group-item-action">
                     <div class="row">
                       <div class="ml-0 mr-0" style="width: 40px; height: auto; color: grey"> {{point.id}} </div>
                       <div class="ml-0 mr-0"style="text-align: left"> {{ point.surname }}</div>
