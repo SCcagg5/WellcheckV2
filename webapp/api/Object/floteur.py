@@ -121,7 +121,7 @@ class floteur:
 
     def infos_point(self, id_point, period_start, period_end, limit = 100000000):
         if not self.__exist(id_point):
-            return [False, "Invalid id_point: '" + id_point + "'", 400]
+            return [False, "Invalid id_point: '" + str(id_point) + "'", 400]
         status = "proprietary" if self.__proprietary(id_point) else "shared" if self.__shared(id_point) else None
         if not status:
             return [False, "Invalid right", 403]
@@ -284,7 +284,7 @@ class floteur:
                             "date": i[4]
                         }
             else:
-                res = sql.get("SELECT id FROM `point_shared` WHERE id_user = %s", (self.usr_id))
+                res = sql.get("SELECT id_point FROM `point_shared` WHERE id_user = %s", (self.usr_id))
                 ret = []
                 for i in res:
                     ret.append(i[0])
