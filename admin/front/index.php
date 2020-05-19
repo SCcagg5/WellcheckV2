@@ -23,18 +23,19 @@
   <div class="bg-light border-right" id="sidebar-wrapper">
     <div class="sidebar-heading">Wellcheck</div>
     <div class="list-group list-group-flush">
+      <a onclick="switchiframe('./app/')" class="choice list-group-item list-group-item-action bg-light">Gestion webapp</a>
       <?php
       $available = scandir("/stats/");
       foreach ($available as $file){
         $res = explode(".html", $file);
         if (count($res) > 1){
-          echo "<a onclick=\"switchiframe('./stats/".$res[0].".html')\" class=\"list-group-item list-group-item-action bg-light\">Stats ".$res[0]."</a>\n";
+          echo "<a onclick=\"switchiframe('./stats/".$res[0].".html')\" class=\"choice list-group-item list-group-item-action bg-light\">Stats ".$res[0]."</a>\n";
         }
       }
       ?>
-      <a onclick="switchiframe('./elastic/')" class="list-group-item list-group-item-action bg-light">Elasticsearch</a>
-      <a onclick="switchiframe('./phpmyadmin/')" class="list-group-item list-group-item-action bg-light">SQL</a>
-      <a onclick="switchiframe('./contact/')" class="list-group-item list-group-item-action bg-light">Contacts</a>
+      <a onclick="switchiframe('./elastic/')" class="choice list-group-item list-group-item-action bg-light">Elasticsearch</a>
+      <a onclick="switchiframe('./phpmyadmin/')" class="choice list-group-item list-group-item-action bg-light">SQL</a>
+      <a onclick="switchiframe('./contact/')" class="choice list-group-item list-group-item-action bg-light">Contacts</a>
     </div>
   </div>
   <!-- /#sidebar-wrapper -->
@@ -56,10 +57,12 @@
               Liens
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="https://github.com/SCcagg5/WellcheckV2">Github</a>
+              <a class="dropdown-item" href="https://github.com/WellCheck-Co/WellCheck">Github Prod</a>
+              <a class="dropdown-item" href="https://github.com/SCcagg5/WellcheckV2">Github Web-Dev</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="wellcheck.fr">Landing</a>
-              <a class="dropdown-item" href="dashboard.wellcheck.fr">Dashboard</a>
+              <a class="dropdown-item" href="https://wellcheck.fr">Landing</a>
+              <a class="dropdown-item" href="https://dashboard.wellcheck.fr">Dashboard</a>
+              <a class="dropdown-item" href="https://api.wellcheck.fr/test/">API</a>
             </div>
           </li>
         </ul>
@@ -67,17 +70,7 @@
     </nav>
 
     <div class="container-fluid container-extend">
-      <iframe frameborder="0" id="iframe" src="<?php
-      $available = scandir("/stats/");
-      foreach ($available as $file){
-        $res = explode(".html", $file);
-        if (count($res) > 1){
-          echo "./stats/".$res[0].".html";
-          break;
-        }
-
-      }
-      ?>" class="all">
+      <iframe frameborder="0" id="iframe" src="./app/" class="all">
       </iframe>
     </div>
   </div>

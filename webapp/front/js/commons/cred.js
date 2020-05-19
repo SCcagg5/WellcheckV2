@@ -1,8 +1,16 @@
 let cred = {
   methods: {
     usr_cred: function() {
-      let actual = window.location.href.split(address)[1]
-      console.log((localStorage.usrtoken && this.checktime("usrtoken")));
+      let actual = window.location.href.split(address)[1].split('?')[0]
+      let get =  this.get_parm()
+      if (get["bindlocal"] == "true"){
+        for (i in get){
+          if (i != "bindlocal") {
+            localStorage[i] = "" + get[i];
+          }
+        }
+      }
+      console.log(localStorage);
       if (localStorage.usrtoken && this.checktime("usrtoken")) {
         let location = localStorage.location ?  localStorage.location  : redirect;
         loc.methods.redirect(location);
@@ -33,6 +41,20 @@ let cred = {
                }
              });
      },
+
+     get_parm: function(){
+       url = window.location.href.split(address)[1].split('?')[1];
+       tmp = url == void 0 ? [] : url.split('&');
+       get = {}
+       for (i = 0; i < tmp.length; i++ ){
+         t = tmp[i].split("=");
+         if (t.length == 2){
+           get["" + t[0]] = "" + t[1]
+         }
+       }
+       return get;
+     },
+
      time: function(exp = null){
        if (exp == null)
           return Math.round(new Date().getTime()/1000);

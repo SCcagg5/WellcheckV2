@@ -59,6 +59,7 @@ services:
        LETSENCRYPT_EMAIL: ${EMAIL}
        API_MOD: ${API_MOD}
        API_PASS: password
+       API_ADM: ${API_ADM}
        DB_USER: ${DB_USER}
        DB_PASS: ${DB_PASS}
        STRIPE_PRIV: ${STRIPE_PRIV}

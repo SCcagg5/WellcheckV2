@@ -1,7 +1,7 @@
 from .routesfunc import *
 
 def setuproute(app, call):
-    @app.route('/test/',            ['OPTIONS', 'POST', 'GET'], lambda x = None: call([])                                            )
+    @app.route('/test/',            ['OPTIONS', 'GET'],         lambda x = None: call([])                                            )
     @app.route('/login/',    	    ['OPTIONS', 'POST'],        lambda x = None: call([getauth])                                     )
     @app.route('/signup/',    	    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, signup, signin, gettoken])            )
     @app.route('/signin/',    	    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, signin, gettoken])                    )
@@ -22,8 +22,12 @@ def setuproute(app, call):
     @app.route('/point/rename/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_rename])              )
     @app.route('/point/infos/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_infos])               )
     @app.route('/points/infos/',    ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, points_infos])              )
-    @app.route('/point/graph/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_graph])              )
+    @app.route('/point/graph/',     ['OPTIONS', 'POST'],        lambda x = None: call([myauth, authuser, point_graph])               )
     @app.route('/points/shared/',   ['OPTIONS', 'GET'],         lambda x = None: call([myauth, authuser, points_shared])             )
     @app.route('/data/add/',        ['OPTIONS', 'POST'],        lambda x = None: call([myauth, data_add])                            )
+
+    @app.route('/admin/login/',     ['OPTIONS', 'POST'],        lambda x = None: call([admtoken])                                    )
+    @app.route('/admin/allusers/',  ['OPTIONS', 'GET'],         lambda x = None: call([authadmin, all_users])                        )
+    @app.route('/admin/spoof/',     ['OPTIONS', 'POST'],        lambda x = None: call([authadmin, gettokenadm])                      )
     def base():
         return

@@ -65,6 +65,8 @@ services:
         - ./admin/services/contact:/contact:ro
       networks:
         - proxy
+      environment:
+        API_ADM: ${API_ADM}
 
    admin:
     image: nginx

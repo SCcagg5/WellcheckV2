@@ -11,6 +11,7 @@ weba =      str(os.getenv('API_WEBA', '*'))
 mod =       str(os.getenv('API_MOD', 'PROD'))
 secret =    str(os.getenv('API_SCRT', '!@ws4RT4ws212@#%'))
 password =  str(os.getenv('API_PASS', 'password'))
+adm_pass =  str(os.getenv('API_ADM', None))
 db_user =   str(os.getenv('DB_USER', 'password'))
 db_pass =   str(os.getenv('DB_PASS', 'password'))
 
@@ -33,8 +34,5 @@ def error(error):
     return JSON.dumps(toret.ret())
 
 if __name__ == '__main__':
-    #try:
     setuproute(app, call)
     run(app, host=host, port=port, debug=True )
-    #except:
-    #    os._exit(0)

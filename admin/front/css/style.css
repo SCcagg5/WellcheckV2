@@ -53,3 +53,7 @@
     margin-left: -15rem;
   }
 }
+
+.choice {
+  cursor: pointer
+}
