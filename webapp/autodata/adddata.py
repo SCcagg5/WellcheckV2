@@ -9,7 +9,10 @@ class autodata:
         points = autodata.get_points()
         point_data = autodata.get_datas(points)
         for i in points:
-            data = point_data[str(i)][0]['data']['data']
+	    if str(i) in data:
+            	data = point_data[str(i)][0]['data']['data']
+            else:
+		data = {}
             ph = data["ph"] if "ph" in data else 7
             ph = autodata.upval(ph, 0.2, 1, 12.8, 0)
             turbidity = data["turbidity"] if "turbidity" in data else 1000
