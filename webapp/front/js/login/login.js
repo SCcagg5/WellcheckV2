@@ -19,6 +19,17 @@ let vm = new Vue({
          };
          data.headers = cred.methods.get_headers()
          user.methods.login(data)
+       },
+       logintest: function() {
+         let data = {
+           headers: {},
+           data: {
+             'password1': "test",
+             'email': "test@test.fr",
+           }
+         };
+         data.headers = cred.methods.get_headers()
+         user.methods.login(data)
        }
    },
    mounted(){

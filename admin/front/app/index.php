@@ -203,10 +203,6 @@ $dat .= "'";
           $("#users")[0].style.display = "block"
         });
         }
-
-
-
-
       get_token();
     </script>
   </body>
