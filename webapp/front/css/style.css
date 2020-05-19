@@ -1577,3 +1577,13 @@ font-size: 21px;
 	margin-top: 0.8rem;
 	margin-bottom: 0.8rem;
 }
+
+
+.logintest{
+	width:160px;
+	margin-left: calc(50% - 80px);
+	text-align:center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 30px
+}
