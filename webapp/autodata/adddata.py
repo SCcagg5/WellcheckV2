@@ -9,19 +9,17 @@ class autodata:
         points = autodata.get_points()
         point_data = autodata.get_datas(points)
         for i in points:
-	    if str(i) in data:
-            	data = point_data[str(i)][0]['data']['data']
-            else:
-		data = {}
-            ph = data["ph"] if "ph" in data else 7
-            ph = autodata.upval(ph, 0.2, 1, 12.8, 0)
-            turbidity = data["turbidity"] if "turbidity" in data else 1000
-            turbidity = autodata.upval(turbidity, 4, 0, 1024, 0, 5)
-            redox = data["redox"] if "redox" in data else 300
-            redox = autodata.upval(redox, 2, 1, 400, 220)
-            temp = data["temp"] if "temp" in data else 5
-            temp = autodata.upval(temp, 0.3, 1, 25, 1)
-            input={
+            if str(i) in point_data:
+              data = point_data[str(i)][0]['data']['data']
+              ph = data["ph"] if "ph" in data else 7
+              ph = autodata.upval(ph, 0.2, 1, 12.8, 0)
+              turbidity = data["turbidity"] if "turbidity" in data else 1000
+              turbidity = autodata.upval(turbidity, 4, 0, 1024, 0, 5)
+              redox = data["redox"] if "redox" in data else 300
+              redox = autodata.upval(redox, 2, 1, 400, 220)
+              temp = data["temp"] if "temp" in data else 5
+              temp = autodata.upval(temp, 0.3, 1, 25, 1)
+              input={
                 "id_sig": point_data[str(i)][0]['id_sig'],
                 "id_point": i,
                 'data': {
@@ -38,8 +36,8 @@ class autodata:
                        }
                    },
                 "date": int(round(time.time() * 1000))
-            }
-            es.index(index='point_test',body=input)
+              }
+              es.index(index='point_test',body=input)
 
     def get_datas(points):
         query = {
