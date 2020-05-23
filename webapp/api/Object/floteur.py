@@ -12,11 +12,11 @@ class floteur:
     def __init__(self, usr_id = -1):
         self.usr_id = str(usr_id)
 
-    def add(self, id_sig):
+    def add(self, id_sig, lat = None, lng = None):
         id_sig = str(id_sig)
-        if (id_sig != "-1"):
-            return [False, "Invalid Sigfox_id", 400]
         if (id_sig == "-1"):
+            if lat is None or lng is None:
+                return [False, "Missing lat or lng", 400]
             number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s AND id_sig = -1", (self.usr_id))[0][0]
             if number > 2:
                 return [False, "Can't have more than 3 test devices", 401]
@@ -24,11 +24,17 @@ class floteur:
         else:
             number = sql.get("SELECT COUNT(*) FROM `point` WHERE id_user = %s", (self.usr_id))[0][0]
             name = "point_" + str(number + 1)
+            return [False, "Invalid Sigfox_id", 400]
         date = str(int(round(time.time() * 1000)))
-        succes = sql.input("INSERT INTO `point` (`id`, `id_user`, `id_sig`, `name`, `surname`, `date`) VALUES (NULL, %s, %s, %s, %s, %s)", \
-        (int(self.usr_id), id_sig, name, name, date))
+        id_point = str(uuid.uuid4())
+        succes = sql.input("INSERT INTO `point` (`id`, `id_user`, `id_sig`, `name`, `surname`, `date`) VALUES (%s, %s, %s, %s, %s, %s)", \
+        (id_point, int(self.usr_id), id_sig, name, name, date))
         if not succes:
             return [False, "data input error", 500]
+        if id_sig == "-1":
+            id_sig = self.__hash(id_sig)
+            data = {"data": None, "pos": {"lat": lat, "lng": lng}}
+            input = self.inputrandom(id_point, id_sig, data, date)
         return [True, {}, None]
 
     def delete(self, id_points):
@@ -45,7 +51,7 @@ class floteur:
         else:
             return [False, "Invalid right", 403]
         if not succes:
-            return [False, "data input error", 500]
+            return [False, "Data input error", 500]
         return [True, {}, None]
 
     def share(self, id_points, email):
@@ -67,10 +73,11 @@ class floteur:
                 date = str(int(round(time.time() * 1000)))
                 number = sql.get("SELECT COUNT(*) FROM `point_shared` WHERE id_user = %s", (id_to))[0][0]
                 name = "point_" + str(number)
-                succes =  sql.input("INSERT INTO `point_shared` (`id`, `id_user`, `id_point`, `date`, `surname`) VALUES (NULL, %s, %s, %s, %s)", \
-                (id_to, id_point, date, name))
+                id_share = str(uuid.uuid4())
+                succes =  sql.input("INSERT INTO `point_shared` (`id`, `id_user`, `id_point`, `date`, `surname`) VALUES (%s, %s, %s, %s, %s)", \
+                (id_share, id_to, id_point, date, name))
                 if not succes:
-                    return [False, "data input error", 500]
+                    return [False, "Data input error", 500]
             else:
                 return [False, "Invalid right : id_point : '" + str(id_point) + "'", 403]
         return [True, {}, None]
@@ -171,9 +178,9 @@ class floteur:
         turbidity = 1000
         redox = 300
         temp = 5
-        datebis = date
+        datebis = int(date) + 900000
         inputs = []
-        for i in range(0, 1003):
+        for i in range(0, 1004):
             ph = self.upval(ph, 0.2, 1, 12.8, 0)
             turbidity = self.upval(turbidity, 4, 0, 1024, 0, 5)
             redox = self.upval(redox, 2, 1, 400, 220)
@@ -209,18 +216,15 @@ class floteur:
         date = int(round(time.time() * 1000))
         if "pos" not in data or not data["pos"]:
             return [False, "Missing index 'pos' inside data", 400]
-        if "lon" not in data['pos'] or "lat" not in data['pos']:
+        if "lng" not in data['pos'] or "lat" not in data['pos']:
             return [False, "Missing inbex 'lon' or 'lat' inside data.pos", 400]
-        if data["data"] == -1:
-            input = self.inputrandom(id_point, id_sig, data, date)
-        else:
-            input={
+        input={
                 "id_sig": id_sig,
                 "id_point": id_point,
                 "data": data,
                 "date": date
             }
-            res = es.index(index='point_test',body=input)
+        res = es.index(index='point_test',body=input)
         return [True, {"data_added": input}, None]
 
 
@@ -305,10 +309,10 @@ class floteur:
               "range" : { "field" : "date", "ranges" : [range]},
               "aggs": {
                 "dedup" : {
-                  "filter": {"terms": {"id_point": id_point}},
+                  "filter": {"terms": {"id_point.keyword": id_point}},
                       "aggs": {
                         "dedup" : {
-                          "terms":{"field": "id_point"},
+                          "terms":{"field": "id_point.keyword"},
                           "aggs": {
                             "top_sales_hits": {
                               "top_hits": {
@@ -378,10 +382,10 @@ class floteur:
               "range" : { "field" : "date", "ranges" : [range]},
               "aggs": {
                 "dedup" : {
-                  "filter": {"terms": {"id_point": id_points}},
+                  "filter": {"terms": {"id_point.keyword": id_points}},
                       "aggs": {
                         "dedup" : {
-                          "terms":{"field": "id_point"},
+                          "terms":{"field": "id_point.keyword"},
                           "aggs": {
                             "top_sales_hits": {
                               "top_hits": {

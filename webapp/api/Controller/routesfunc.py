@@ -181,9 +181,10 @@ def point_add(cn, nextc):
     if not err[0]:
         return cn.toret.add_error(err[1], err[2])
     cn.pr = err[1]
+    cn.pr = check.setnoneopt(cn.pr, ["lng", "lat"])
 
     use = floteur(cn.private["user"].id)
-    err = use.add(cn.pr["id_sig"])
+    err = use.add(cn.pr["id_sig"], cn.pr["lat"], cn.pr["lng"])
     return cn.call_next(nextc, err)
 
 def point_share(cn, nextc):

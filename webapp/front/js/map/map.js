@@ -52,7 +52,7 @@ let vm = new Vue({
             this.markers['proprietary'][i]["marker"] = {
                   position: {
                               lat: last_data['data']['pos']['lat'],
-                              lng: last_data['data']['pos']['lon']
+                              lng: last_data['data']['pos']['lng']
                             },
                   title:this.markers['proprietary'][i]["name"],
                   data: {'id': this.markers['proprietary'][i]['id'], 'order': i, 'test': this.markers['proprietary'][i]["test"]},
@@ -123,42 +123,15 @@ let vm = new Vue({
         let data = {}
         data['headers'] = cred.methods.get_headers()
         data['data'] = {}
-        if (res == void 0 || res['data_added'] == void 0){
-          user.methods.send('points/infos', data, this.store);
-        } else {
-          user.methods.send('points/infos', data, this.storebis);
-        }
+        user.methods.send('points/infos', data, this.store);
       },
-      storebis: function(data){
+      store: function(data){
           if (data != '') {
             localStorage.points = JSON.stringify(data['points']);
             this.markers = data['points'];
             this.update();
           }
-      },
-      store: function(data) {
-        if (data != '') {
-          localStorage.points = JSON.stringify(data['points']);
-          this.markers = data['points'];
-          this.update();
-          for (var i = 0; i < this.markers['proprietary'].length; i++){
-            if (this.markers['proprietary'][i]['test'] == true && this.markers['proprietary'][i]['data'].length == 0){
-              let data = {}
-              data['headers'] = cred.methods.get_headers()
-              console.log(this.$refs.main);
-              data['data'] = {
-                "data": {
-                	"data": -1,
-                	"pos": {"lon": this.$refs.main.$mapObject.center.lng(), "lat": this.$refs.main.$mapObject.center.lat()}
-                },
-                "point_id": this.markers['proprietary'][i]['id'],
-                "sig_id": -1
-              };
-              user.methods.send('data/add', data, this.infos);
-            }
-          }
-        }
-      },
+      }
    },
    mounted(){
      cred.methods.api_cred()

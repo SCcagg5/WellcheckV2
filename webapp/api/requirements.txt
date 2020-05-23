@@ -3,5 +3,6 @@ pymysql
 requests
 pyjwt
 phonenumbers
-stripe 
+stripe
 elasticsearch
+uuid

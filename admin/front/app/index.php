@@ -84,8 +84,6 @@ $dat .= "'";
               </table>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
@@ -94,8 +92,8 @@ $dat .= "'";
     <script src="/js/jquery.dataTables.min.js"></script>
     <script>
 
-      var method = "https://";
-      var host = "wellcheck.fr";
+      var method = "http://";
+      var host = "localhost";
       var password = <?= $dat ?>;
       var token = "";
 

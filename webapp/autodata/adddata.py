@@ -31,7 +31,7 @@ class autodata:
                        "note": autodata.note(ph, turbidity, redox, temp)
                    },
                    'pos': {
-                       'lon': point_data[str(i)][0]['data']['pos']['lon'],
+                       'lng': point_data[str(i)][0]['data']['pos']['lng'],
                        'lat': point_data[str(i)][0]['data']['pos']['lat'],
                        }
                    },
@@ -47,10 +47,10 @@ class autodata:
               "range" : { "field" : "date", "ranges" : {"from": "0"}},
               "aggs": {
                 "dedup" : {
-                  "filter": {"terms": {"id_point": points}},
+                  "filter": {"terms": {"id_point.keyword": points}},
                       "aggs": {
                         "dedup" : {
-                          "terms":{"field": "id_point"},
+                          "terms":{"field": "id_point.keyword"},
                           "aggs": {
                             "top_sales_hits": {
                               "top_hits": {

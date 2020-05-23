@@ -14,9 +14,31 @@ props: {data: {default: void 0}},
 
 watch:{
   data:function(newd, oldd){
-    if (oldd == "" && this.selected.length == 0){
-      var i;
-      var arr = []
+    var i;
+    var i2;
+    var arr;
+
+    if (typeof localStorage["selected"] == "string"){
+      if (this.data["proprietary"].length > 0){
+        for ( i2 = 0; i2 < this.data["proprietary"].length; i2++) {
+          if (this.data["proprietary"][i2].id == localStorage["selected"]) {
+            i =  this.data["proprietary"][i2]
+            arr = [i.id, i.surname, i.data]
+            this.select(arr);
+          }
+        }
+      } else if (this.data["shared"].length > 0){
+        for ( i2 = 0; i2 < this.data["shared"].length; i2++) {
+          if (this.data["shared"][i2].id == localStorage["selected"]) {
+            i =  this.data["shared"][i2]
+            arr = [i.id, i.surname, i.data]
+            this.select(arr);
+          }
+        }
+      }
+      console.log(arr);
+    }
+    if (oldd == "" && this.selected.length == 0 && arr == void 0){
       if (this.data["proprietary"].length > 0){
         i =  this.data["proprietary"][0]
         arr = [i.id, i.surname, i.data]
@@ -26,6 +48,7 @@ watch:{
       }
       this.select(arr);
     }
+
   }
 },
 
@@ -333,6 +356,7 @@ methods: {
 
 
   infos: function(id) {
+    console.log(id);
     let data = {}
     data['headers'] = cred.methods.get_headers()
     data['data'] = {

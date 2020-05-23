@@ -10,7 +10,6 @@ let cred = {
           }
         }
       }
-      console.log(localStorage);
       if (localStorage.usrtoken && this.checktime("usrtoken")) {
         let location = localStorage.location ?  localStorage.location  : redirect;
         loc.methods.redirect(location);

@@ -15,6 +15,9 @@ let compModDevices = {
       month = month.substr(day.length - 2);
       let str = day + '.' + month + '.' + date.getFullYear();
       return str;
+    },
+    limitid: function(id){
+      return (id.substr(0, 4) + "...");
     }
   },
 
@@ -29,6 +32,9 @@ let compModDevices = {
         }
       });
     },
+    redirect: function(location){
+      loc.methods.redirect(location)
+    },
     addPoint: function () {
       vm.$refs.nav.modale('Add_a_device');
       let data = {}
@@ -38,20 +44,16 @@ let compModDevices = {
     addTest: function(){
       let data = {}
       data['headers'] = cred.methods.get_headers()
-      data['data'] = {"id_sig": -1}
+      data['data'] = {"id_sig": -1, "lng": vm.$refs.main.$mapObject.center.lng(), "lat": vm.$refs.main.$mapObject.center.lat()}
       user.methods.send('point/add', data, this.infos);
     },
     infos: function(res) {
       let data = {}
       data['headers'] = cred.methods.get_headers()
       data['data'] = {}
-      if (res['data_added'] == void 0){
-        user.methods.send('points/infos', data, this.store);
-      } else {
-        user.methods.send('points/infos', data, this.storebis);
-      }
+      user.methods.send('points/infos', data, this.store);
     },
-    storebis: function(data){
+    store: function(data){
         if (data != '') {
           localStorage.points = JSON.stringify(data['points']);
           this.points = JSON.parse(localStorage.points);
@@ -59,28 +61,6 @@ let compModDevices = {
           vm.markers = this.points;
           vm.update()
         }
-    },
-    store: function(data) {
-      if (data != '') {
-        localStorage.points = JSON.stringify(data['points']);
-        this.points = JSON.parse(localStorage.points);
-        this.limit = Math.round(new Date().getTime() - 3600000);
-        for (var i = 0; i < this.points['proprietary'].length; i++){
-          if (this.points['proprietary'][i]['test'] == true && this.points['proprietary'][i]['data'].length == 0){
-            let data = {}
-            data['headers'] = cred.methods.get_headers()
-            data['data'] = {
-              "data": {
-              	"data": -1,
-              	"pos": {"lon": vm.$refs.main.$mapObject.center.lng(), "lat": vm.$refs.main.$mapObject.center.lat()}
-              },
-              "point_id": this.points['proprietary'][i]['id'],
-              "sig_id": -1
-            };
-            user.methods.send('data/add', data, this.infos);
-          }
-        }
-      }
     },
   },
   template: `
@@ -98,10 +78,10 @@ let compModDevices = {
               <div class="col-md-1 hidesms"></div>
               <ul class='list-group col-12 sm-modalelist' style="overflow-x: hidden">
                   <li v-for="point in points.proprietary" v-if="point.test == false || point.test == true && display_test == true"  class="list-group-item list-group-item-action">
-                    <div class="row">
-                      <div class="ml-0 mr-0" style="width: 40px; height: auto; color: grey"> {{point.id}} </div>
-                      <div class="ml-0 mr-0"style="text-align: left"> {{ point.surname }}</div>
-                      <div class="ml-auto mr-0 datelist"> Added {{ point.date | tostr }} </div>
+                    <div class="row" v-on:click="redirect('/stats?bindlocal=true&selected=' + point.id )">
+                      <div class="ml-0 mr-0" style="width: 80px; height: auto; color: grey; cursor: pointer;" data-toggle="tooltip" :title="point.id" > {{point.id | limitid }} </div>
+                      <div class="ml-0 mr-auto"style="text-align: left"> {{ point.surname }}</div>
+                      <div class="ml-0 mr-0 datelist"> Added {{ point.date | tostr }} </div>
                       <div v-if="point.test == true" class="ml-3 mr-3 testbtn" style="text-align: right"> Test &#10004; </div>
                       <div v-if="point.data.length > 0 && point.data[0].date > limit && point.test == false" class="ml-3 mr-3 successbtn" style="text-align: right"> Online &#10004; </div>
                       <div v-if="(point.data.length == 0 || point.data[0].date < limit) && point.test == false" class="ml-3 mr-3 errorbtn" style="text-align: right"> Offline &#10006; </div>
