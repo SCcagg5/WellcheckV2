@@ -36,7 +36,6 @@ watch:{
           }
         }
       }
-      console.log(arr);
     }
     if (oldd == "" && this.selected.length == 0 && arr == void 0){
       if (this.data["proprietary"].length > 0){
@@ -58,11 +57,23 @@ filters:{
     let date = parseInt(timestamp)
     let last = actual - date;
     let min = Math.floor((last/1000/60) << 0);
+    if (min >= 60){
+      min = (Math.floor(min / 60)+ "").padStart(2, "0") + "h " + ((min % 60)+ "").padStart(2, "0")
+    } else {
+      min = (min + "").padStart(2, "0")
+    }
+    min = min.padStart(7, ' ')
     return min
-  }
+  },
+
 },
 
+
 methods: {
+  cap: function(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+},
+
   select: function(arr){
     this.selected = arr
     this.infos(arr[0]);
@@ -350,13 +361,17 @@ methods: {
 				}
 			}
 		};
-
 		this.charts["chart3"] = new Chart(ctx, cfg);
   },
 
+  change: function(name){
+    if (this.received[1] == 1){
+      this.received = [name, 0];
+      this.infos(this.selected[0]);
+    }
+  },
 
   infos: function(id) {
-    console.log(id);
     let data = {}
     data['headers'] = cred.methods.get_headers()
     data['data'] = {
@@ -370,25 +385,24 @@ methods: {
 
   store: function(data) {
     if (data != '') {
-      console.log(data, this.charts);
        this.charts["chart1"].config.data.labels = data["chart1"]["data"]["label"];
        this.charts["chart1"].update();
        this.charts["chart1"].config.data.datasets[0].data = data["chart1"]["data"]["data"];
        this.charts["chart1"].update();
        this.charts["chart2"].config.data.datasets[2].data = data["chart2"][this.received[0]]["data"];
        this.charts["chart2"].config.data.datasets[0].data = [{
-         x: data["chart2"]["ph"]["limits"]["y"]["min"],
-         y: data["chart2"]["ph"]["limits"]["opt"]["low"]
+         x: data["chart2"][this.received[0]]["limits"]["y"]["min"],
+         y: data["chart2"][this.received[0]]["limits"]["opt"]["low"]
        }, {
-         x: data["chart2"]["ph"]["limits"]["y"]["max"],
-         y: data["chart2"]["ph"]["limits"]["opt"]["low"]
+         x: data["chart2"][this.received[0]]["limits"]["y"]["max"],
+         y: data["chart2"][this.received[0]]["limits"]["opt"]["low"]
        }];
        this.charts["chart2"].config.data.datasets[1].data = [{
-         x: data["chart2"]["ph"]["limits"]["y"]["min"],
-         y: data["chart2"]["ph"]["limits"]["opt"]["high"]
+         x: data["chart2"][this.received[0]]["limits"]["y"]["min"],
+         y: data["chart2"][this.received[0]]["limits"]["opt"]["high"]
        }, {
-         x: data["chart2"]["ph"]["limits"]["y"]["max"],
-         y: data["chart2"]["ph"]["limits"]["opt"]["high"]
+         x: data["chart2"][this.received[0]]["limits"]["y"]["max"],
+         y: data["chart2"][this.received[0]]["limits"]["opt"]["high"]
        }];
        this.charts["chart2"].config.options.scales.yAxes[0].ticks.min = data["chart2"][this.received[0]].limits.x.min
        this.charts["chart2"].config.options.scales.yAxes[0].ticks.max = data["chart2"][this.received[0]].limits.x.max
@@ -462,7 +476,7 @@ template: `
                                name="Current Consumption"
                                hover=true style="height: 100%">
                                <table style="width:100%">
-                                <tr>
+                                <tr style="margin-bottom: 5px;">
                                   <th>Time</th>
                                   <th>Note</th>
                                   <th>PH</th>
@@ -470,13 +484,14 @@ template: `
                                   <th>Redox</th>
                                   <th>Turbidity</th>
                                 </tr>
+                                <br>
                                 <tr v-for="data in selected[2]">
-                                  <td>{{ data.date | tostr }} min ago</td>
-                                  <td>{{ data.data.data.note }}</td>
-                                  <td>{{ data.data.data.ph }}</td>
-                                  <td>{{ data.data.data.temp }}</td>
-                                  <td>{{ data.data.data.redox }}</td>
-                                  <td>{{ data.data.data.turbidity }}</td>
+                                  <td><pre style="margin-bottom: 0">{{ data.date | tostr }} min ago</pre></td>
+                                  <td><pre style="margin-bottom: 0">{{ data.data.data.note }}</pre></td>
+                                  <td><pre style="margin-bottom: 0">{{ data.data.data.ph }}</pre></td>
+                                  <td><pre style="margin-bottom: 0">{{ data.data.data.temp }}</pre></td>
+                                  <td><pre style="margin-bottom: 0">{{ data.data.data.redox }}</pre></td>
+                                  <td><pre style="margin-bottom: 0">{{ data.data.data.turbidity }}</pre></td>
                                 </tr>
                               </table>
                     </container>
@@ -484,8 +499,28 @@ template: `
                   </div>
                   <div class="row">
                   <div class="col-lg-12 col-sm-12 marge">
+                    <container hover=false
+                               border=false
+                               style="height: 100%">
+                                 <div class="row">
+                                  <div class="col-3">
+                                    <div class="wc-button"  v-on:click="change('ph')"> ph </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="wc-button" v-on:click="change('turbidity')"> turbidity </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="wc-button" v-on:click="change('temp')"> temp </div>
+                                  </div>
+                                  <div class="col-3">
+                                    <div class="wc-button" v-on:click="change('redox')"> redox </div>
+                                  </div>
+                                </div>
+                    </container>
+                  </div>
+                  <div class="col-lg-12 col-sm-12 marge">
                     <container note="Your consomption for this month, it may take up to 10 hours to update"
-                               :name="'24H - ' + selected[1] + ' - PH'"
+                               :name="'24H - ' + selected[1] + ' - ' + cap(received[0])"
                                hover=false
                                border=false
                                fullscreen=true
@@ -496,7 +531,7 @@ template: `
                   </div>
                   <div class="col-lg-12 col-sm-12 marge">
                     <container note="Your consomption for this month, it may take up to 10 hours to update"
-                               :name="'ALL - ' + selected[1] + ' - PH'"
+                               :name="'ALL - ' + selected[1] + ' - ' + cap(received[0])"
                                hover=false
                                border=false
                                fullscreen=true

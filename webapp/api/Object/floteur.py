@@ -146,9 +146,11 @@ class floteur:
         ret["chart2"] = self.__graph(id_point, datas, basetime - 86400000, basetime)
         ret["chart3"] = self.__graph(id_point, datas)
         res = {"label": [], "data": []}
-        for i in ret["chart1"]["data"]:
-            res["label"].append(i["t"])
-            res["data"].append(i["y"])
+        i = 0
+        while i < len(ret["chart1"]["data"]):
+            res["label"].append(ret["chart1"]["data"][i]["t"])
+            res["data"].append(ret["chart1"]["data"][i]["y"])
+            i += 1
         ret["chart1"]["data"] = res
         return [True, ret, None]
 
@@ -332,18 +334,35 @@ class floteur:
         es.indices.refresh(index="point_test")
         res = es.search(index="point_test", body=query)
         ret = {}
-        for i in datas:
-            ret[i] = []
-        for i in res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]:
-            for i2 in i["top_sales_hits"]["hits"]["hits"]:
-                for i in datas:
-                    if ("date" in i2["_source"] and i in i2["_source"]["data"]["data"]):
-                        ret[i].append({"t": int(i2["_source"]["date"]), "y": float(i2["_source"]["data"]["data"][i])})
+        i = 0
+        while i < len(datas):
+            ret[datas[i]] = []
+            i += 1
+        i = 0
+        es_data = res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]
+        while i < len(es_data):
+            i2 = 0
+            while i2 < len(es_data[i]["top_sales_hits"]["hits"]["hits"]):
+                i3 = 0
+                while i3 < len(datas):
+                    if ("date" in es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]
+                        and datas[i3] in es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["data"]["data"]):
+                        ret[datas[i3]].append(
+                            {"t": int(es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["date"]),
+                             "y": float(es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["data"]["data"][datas[i3]])
+                            }
+                        )
+                    i3 += 1
+                i2 += 1
+            i += 1
         res = ret
         ret = {}
         model = {
-        "ph": {"max_x" : 8, "min_x": 6, "opt": {"high": 7.6, "low": 6.2}},
-        "note": {"max_x" : 19, "min_x": 0}
+            "ph":        {"max_x" : 9,   "min_x": 6,   "opt": {"high": 8.2, "low": 6.5 }},
+            "turbidity": {"max_x" : 5.5, "min_x": 4,   "opt": {"high": 5,   "low": 4.5 }},
+            "temp":      {"max_x" : 25,  "min_x": 0,   "opt": {"high": 20,  "low": 1   }},
+            "redox":     {"max_x" : 500, "min_x": 150, "opt": {"high": 400, "low": 220 }},
+            "note":      {"max_x" : 19,  "min_x": 0,   "opt": {"high": 20,  "low": 15  }},
         }
         for i in datas:
             if i in res and len(res[i]) > 0:
