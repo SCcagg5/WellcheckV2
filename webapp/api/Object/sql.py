@@ -6,7 +6,7 @@ db_pass =   str(os.getenv('DB_PASS', 'password'))
 
 class sql:
     def cred():
-        return pymysql.connect("datab", db_user, db_pass,"wellcheck" )
+        return pymysql.connect("database", db_user, db_pass,"wellcheck" )
 
     def get(query, data):
         db = sql.cred()

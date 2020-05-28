@@ -88,7 +88,7 @@ class autodata:
         return points
 
     def cred():
-        return pymysql.connect("datab", str(sys.argv[1]), str(sys.argv[2]),"wellcheck" )
+        return pymysql.connect("database", str(sys.argv[1]), str(sys.argv[2]),"wellcheck" )
 
     def get(query, data):
         db = autodata.cred()

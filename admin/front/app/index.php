@@ -92,8 +92,8 @@ $dat .= "'";
     <script src="/js/jquery.dataTables.min.js"></script>
     <script>
 
-      var method = "http://";
-      var host = "localhost";
+      var method = "https://";
+      var host = "wellcheck.fr";
       var password = <?= $dat ?>;
       var token = "";
 

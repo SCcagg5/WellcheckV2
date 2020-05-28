@@ -27,7 +27,7 @@ services:
        - /sessions
        - ./admin/services/phpmyadmin/config.inc.php:/etc/phpmyadmin/config.inc.php:ro
      external_links:
-       - datab:db
+       - database:db
      networks:
        - db-net
        - proxy
