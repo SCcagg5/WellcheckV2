@@ -6,3 +6,4 @@ phonenumbers
 stripe
 elasticsearch
 uuid
+reportlab

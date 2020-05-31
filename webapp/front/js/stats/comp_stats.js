@@ -494,6 +494,8 @@ template: `
                                   <td><pre style="margin-bottom: 0">{{ data.data.data.turbidity }}</pre></td>
                                 </tr>
                               </table>
+                              <a class="wc-button" style="width: 230px; margin-top: 20px" :href="method + '://doc.'+ address +'/src.php?id='+selected[0]+'&from=0&to=1690922658'"> Get full report </a>
+
                     </container>
                   </div>
                   </div>

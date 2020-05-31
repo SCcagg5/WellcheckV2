@@ -5,6 +5,7 @@ from Object.order import order
 from Object.calc import sim
 from Object.admin import admin
 from Object.floteur import floteur
+from Object.pdf import pdf_doc
 import json
 
 def getauth(cn, nextc):
@@ -255,6 +256,16 @@ def data_add(cn, nextc):
 
     use = floteur()
     err = use.adddata(cn.pr["data"], cn.pr["sig_id"], cn.pr["point_id"])
+    return cn.call_next(nextc, err)
+
+def pdf_report(cn, nextc):
+    err = check.contain(cn.pr, ["points_id", "period_start", "period_end"])
+    if not err[0]:
+        return cn.toret.add_error(err[1], err[2])
+    cn.pr = err[1]
+
+    use = pdf_doc()
+    err = use.report(floteur(), cn.pr["points_id"], cn.pr["period_start"], cn.pr["period_end"])
     return cn.call_next(nextc, err)
 
 def admtoken(cn, nextc):

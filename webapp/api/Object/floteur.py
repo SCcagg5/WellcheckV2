@@ -110,6 +110,7 @@ class floteur:
         if id_points:
              prop = list(set(prop).intersection(id_points))
              shar = list(set(shar).intersection(id_points))
+        print(str(prop))
         propdetail = self.__get_point("proprietary", details=True)
         shardetail = self.__get_point("shared", details=True)
         propdata = self.__infos_query(prop, period_start, period_end, limit)
@@ -164,6 +165,20 @@ class floteur:
         else:
             ret = int(num + randNbr)
         return ret
+
+    def pdf_report(self, id_points, date_start = None, date_end = None, limit = 10000000):
+        res = sql.get("SELECT `id`, `id_sig`, `name`, `surname`, `id_user` FROM `point` WHERE id = %s", (id_points[0]))
+        ret = {}
+        for i in res:
+            ret[str(i[0])] = {
+                    "id": i[0],
+                    "sig_id": i[1],
+                    "name": i[2],
+                    "surname": i[3],
+                    "user_id": i[4]
+                }
+        data = self.__infos_query(id_points, date_start, date_end, limit)
+        return [True, {"detail": ret, "data": data}, None]
 
     def note(self, ph, turb, orp, temp):
         ph_point = 1.4*10**-32-29.3*ph+8.19*ph**2-0.56*ph**3
