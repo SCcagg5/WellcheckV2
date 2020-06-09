@@ -110,7 +110,6 @@ class floteur:
         if id_points:
              prop = list(set(prop).intersection(id_points))
              shar = list(set(shar).intersection(id_points))
-        print(str(prop))
         propdetail = self.__get_point("proprietary", details=True)
         shardetail = self.__get_point("shared", details=True)
         propdata = self.__infos_query(prop, period_start, period_end, limit)

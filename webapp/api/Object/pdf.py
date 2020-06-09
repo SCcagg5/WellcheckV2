@@ -117,10 +117,6 @@ class pdf_doc:
                  pdf.drawString(100 * mm, 13 * mm, str(page) + " / "  + str(total_page))
                  pdf.drawString(65 * mm, 5 * mm, id_doc)
                  renderPDF.draw(dr, pdf, 210 * mm - 82, 2)
-
-
-
-
         return [True, {"doc_id": id_doc, "Content": str(base64.b64encode(pdf.getpdfdata().decode('utf8', 'ignore').encode('ascii')))[2:-1], "Type": "pdf"}, None]
 
     def ret_bin(self, delete = False):
