@@ -110,7 +110,7 @@ let vm = new Vue({
                         Note: ` + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] != void 0 ? this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] / 2 : '_' ) + ` / 10
                         <div class="notebarholder">
                           <div class="notebar" style=" ` + (
-                              this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] ?
+                              this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] != void 0 ?
                               this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] > 15 ? 'background-color: #03ba00; width: ' + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] * 5) + '%;' :
                               this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] > 10 ? 'background-color: #ff970f; width: ' + (this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] * 5) + '%;' :
                               'background-color: red; width: ' + ((this.markers['proprietary'][i]["data"][0]["data"]["data"]['note'] + 1) * 5) + '%;' : 'width: 0%' ) + `">
