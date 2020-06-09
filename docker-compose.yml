@@ -136,6 +136,7 @@ services:
     volumes:
       - ./landing/front:/script:ro
       - ./documents/front:/doc:ro
+      - ./documents/save:/savedoc
       - ./admin/services/contact:/result
     networks:
       - proxy

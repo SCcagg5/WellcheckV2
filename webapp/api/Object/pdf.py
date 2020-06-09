@@ -10,6 +10,10 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib import colors
 from reportlab.lib.units import mm
+from reportlab.graphics.barcode import qr
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics import renderPDF
+
 from datetime import datetime
 
 
@@ -38,6 +42,12 @@ class pdf_doc:
         pdf.setFillColorRGB(0, 0, 0)
         page = 1
 
+        qr_code = qr.QrCodeWidget('https://doc.wellcheck.fr/?doc=' + id_doc)
+        bounds = qr_code.getBounds()
+        width = bounds[2] - bounds[0]
+        height = bounds[3] - bounds[1]
+        dr = Drawing(80, 80, transform=[80./width,0,0,80./height,0,0])
+        dr.add(qr_code)
 
         pdf.setFont("Helvetica-Bold", 14)
         pdf.drawString(90 * mm, (267 - 40) * mm, "Informations:")
@@ -47,6 +57,7 @@ class pdf_doc:
         pdf.setFont("Helvetica", 12)
         pdf.drawString(100 * mm, 13 * mm, str(page) + " / "  + str(total_page))
         pdf.drawString(65 * mm, 5 * mm, id_doc)
+        renderPDF.draw(dr, pdf, 210 * mm - 82, 2)
         pdf.drawString(40 * mm, (267 - 54) * mm, "Sigfox_id")
         pdf.drawString(40 * mm, (267 - 58) * mm, "Name")
         pdf.drawString(40 * mm, (267 - 62) * mm, "Owned_by")
@@ -105,8 +116,12 @@ class pdf_doc:
                  pdf.setFont("Helvetica", 12)
                  pdf.drawString(100 * mm, 13 * mm, str(page) + " / "  + str(total_page))
                  pdf.drawString(65 * mm, 5 * mm, id_doc)
+                 renderPDF.draw(dr, pdf, 210 * mm - 82, 2)
 
-        return [True, {"data": data, "Content": str(base64.b64encode(pdf.getpdfdata().decode('utf8', 'ignore').encode('ascii')))[2:-1], "Type": "pdf"}, None]
+
+
+
+        return [True, {"doc_id": id_doc, "Content": str(base64.b64encode(pdf.getpdfdata().decode('utf8', 'ignore').encode('ascii')))[2:-1], "Type": "pdf"}, None]
 
     def ret_bin(self, delete = False):
         ret = ""
