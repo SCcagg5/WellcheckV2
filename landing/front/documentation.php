@@ -55,6 +55,8 @@
                   <select name="doc" class="nav-select" onchange="changefile(this.options[this.selectedIndex].value)">
                     <option value="pdfs/Wellcheck_arch_022020.pdf" class="opt" selected disabled>Technique</option>
                     <option value="pdfs/Wellcheck_arch_022020.pdf" class="opt">[EN] February 2020</option>
+                    <option value="pdfs/EXEMPLE_WC_report_725d0b48-d159-4e29-8913-9f61fc140583.pdf" class="opt">[EN] Exemple report - June 2020</option>
+                    <option value="pdfs/Wellcheck_arch_062020.pdf" class="opt">[EN] June 2020</option>
                   </select>
                 </li>
             </ul>
