@@ -137,21 +137,10 @@ class floteur:
         ret["data"] = res[str(id_point)] if str(id_point) in res else []
         return [True, ret, None]
 
-    def graph_point(self, id_point, datas):
-        if not isinstance(datas, list):
-            return [False, "Datas should be a list", 400]
+    def graph_point(self, id_point, data):
         basetime = int(time.time() * 1000)
         ret = {}
-        ret["chart1"] = self.__graph(id_point, ["note"], basetime - 86400000, basetime)["note"]
-        ret["chart2"] = self.__graph(id_point, datas, basetime - 86400000, basetime)
-        ret["chart3"] = self.__graph(id_point, datas)
-        res = {"label": [], "data": []}
-        i = 0
-        while i < len(ret["chart1"]["data"]):
-            res["label"].append(ret["chart1"]["data"][i]["t"])
-            res["data"].append(ret["chart1"]["data"][i]["y"])
-            i += 1
-        ret["chart1"]["data"] = res
+        ret["chart1"], ret["chart2"], ret["chart3"] = self.__graph(id_point, data, basetime - 86400000, basetime)
         return [True, ret, None]
 
     def upval(self, num, der, rou, max, min, mod = None):
@@ -310,7 +299,7 @@ class floteur:
                     ret.append(i[0])
         return ret
 
-    def __graph(self, id_point, datas, date_start = None, date_end = None,limit = None):
+    def __graph(self, id_point, data, date_start = None, date_end = None,limit = None):
         id_point = [id_point]
         range = {"from": "0"}
         if date_start:
@@ -319,58 +308,82 @@ class floteur:
             range["to"] = str(date_end)
         limit = limit if limit else 10000000
         query = {
-          "size": -1,
+          "size": 0,
           "aggs" : {
-            "date_range" : {
-              "range" : { "field" : "date", "ranges" : [range]},
+            "dedup" : {
+              "filter": {
+                "terms": {
+                  "id_point.keyword":id_point
+                }
+              },
               "aggs": {
-                "dedup" : {
-                  "filter": {"terms": {"id_point.keyword": id_point}},
+                "date_range" : {
+                  "range" : {
+                    "field" : "date",
+                    "ranges" :
+                      [range]
+                  },
+                  "aggs": {
+                    "per_hour": {
+                      "date_histogram": {
+                        "field": "date",
+                        "fixed_interval": "2h"
+                      },
                       "aggs": {
-                        "dedup" : {
-                          "terms":{"field": "id_point.keyword"},
-                          "aggs": {
-                            "top_sales_hits": {
-                              "top_hits": {
-                                "sort": [{"date": {"order": "desc"}}],
-                                "_source": {"includes": [ "date", "data" ]},
-                                "size" : limit
-                              }
-                            }
+                        "note": {
+                          "avg": {
+                            "field": "data.data.note"
+                          }
+                        },
+                        data: {
+                          "avg": {
+                            "field": "data.data." + data
                           }
                         }
                       }
+                    },
+                    "min" : {
+                      "min" : {
+                        "field" : "data.data." + data
+                      }
+                    },
+                    "max" : {
+                      "max" : {
+                        "field" : "data.data." + data
+                      }
                     }
+                  }
+                },
+                "per_day": {
+                  "date_histogram": {
+                    "field": "date",
+                    "fixed_interval": "12h"
+                  },
+                  "aggs": {
+                    data: {
+                      "avg": {
+                        "field": "data.data." + data
+                      }
+                    }
+                  }
+                },
+                "min" : {
+                  "min" : {
+                    "field" : "data.data." + data
+                  }
+                },
+                "max" : {
+                  "max" : {
+                    "field" : "data.data." + data
+                  }
                 }
+              }
             }
           }
         }
         es.indices.refresh(index="point_test")
-        res = es.search(index="point_test", body=query)
-        ret = {}
-        i = 0
-        while i < len(datas):
-            ret[datas[i]] = []
-            i += 1
-        i = 0
-        es_data = res["aggregations"]["date_range"]["buckets"][0]["dedup"]["dedup"]["buckets"]
-        while i < len(es_data):
-            i2 = 0
-            while i2 < len(es_data[i]["top_sales_hits"]["hits"]["hits"]):
-                i3 = 0
-                while i3 < len(datas):
-                    if ("date" in es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]
-                        and datas[i3] in es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["data"]["data"]):
-                        ret[datas[i3]].append(
-                            {"t": int(es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["date"]),
-                             "y": float(es_data[i]["top_sales_hits"]["hits"]["hits"][i2]["_source"]["data"]["data"][datas[i3]])
-                            }
-                        )
-                    i3 += 1
-                i2 += 1
-            i += 1
-        res = ret
-        ret = {}
+        res = es.search(index="point_test", body=query)["aggregations"]
+
         model = {
             "ph":        {"max_x" : 9,   "min_x": 6,   "opt": {"high": 8.2, "low": 6.5 }},
             "turbidity": {"max_x" : 5.5, "min_x": 4,   "opt": {"high": 5,   "low": 4.5 }},
@@ -378,28 +391,45 @@ class floteur:
             "redox":     {"max_x" : 500, "min_x": 150, "opt": {"high": 400, "low": 220 }},
             "note":      {"max_x" : 19,  "min_x": 0,   "opt": {"high": 20,  "low": 15  }},
         }
-        for i in datas:
-            if i in res and len(res[i]) > 0:
-                opt = []
-                max_y = res[i][0]["t"]
-                min_y = res[i][len(res[i]) - 1]["t"]
-                max_x = res[i][0]["y"]
-                min_x = res[i][0]["y"]
-                if i in model:
-                    max_x = model[i]["max_x"] if "max_x" in model[i] else max_x
-                    min_x = model[i]["min_x"] if "min_x" in model[i] else min_x
-                    max_y = model[i]["max_y"] if "max_y" in model[i] else max_y
-                    min_y = model[i]["min_y"] if "min_y" in model[i] else min_y
-                    opt   = model[i]["opt"]   if "opt"   in model[i] else opt
-                for i2 in res[i]:
-                    if   i2["y"] > max_x:
-                        max_x =  i2["y"]
-                    elif i2["y"] < min_x:
-                        min_x =  i2["y"]
-                ret[i] = { "data": res[i], "limits": {"y": {"min": min_y, "max": max_y}, "x": {"min": min_x - 1 if min_x >= 1 else 0, "max": max_x + 1}, "opt": opt}}
-            else:
-                ret[i] = {"data": [], "limits": {"y": {"min": 0, "max": 0}, "x": {"min":0, "max":0}, "opt": []}}
-        return ret
+        d_opt = model[data]
+        n_opt = model["note"]
+
+        dat = res["dedup"]["date_range"]["buckets"][0]["per_hour"]["buckets"]
+        min_date = dat[0]["key"]
+        max_date = dat[len(dat) - 1]["key"]
+        min_data = res["dedup"]["date_range"]["buckets"][0]["min"]["value"]
+        min_data = d_opt["min_x"] if d_opt["min_x"] < min_data else min_data
+        min_data = 0 if min_data < 1 else min_data - 1
+        max_data = res["dedup"]["date_range"]["buckets"][0]["max"]["value"]
+        max_data = (d_opt["max_x"] if d_opt["max_x"] > max_data else max_data) + 1
+
+        ret1 = {"data": {"data": [], "label": []}, "limits": {"y": {"min": min_date, "max": max_date}, "x": {"min": n_opt["min_x"], "max": n_opt["max_x"]}, "opt": n_opt["opt"]}}
+        ret2 = { data: {"data": [], "limits": {"y": {"min": min_date, "max": max_date}, "x": {"min": min_data, "max": max_data}, "opt": d_opt["opt"]}}}
+
+        i = 0
+        while i < len(dat):
+            ret1["data"]["data"].append(dat[i]["note"]["value"])
+            ret1["data"]["label"].append(dat[i]["key"])
+            ret2[data]["data"].append({"y": dat[i][data]["value"], "t": dat[i]["key"]})
+            i += 1
+
+        dat = res["dedup"]["per_day"]["buckets"]
+        min_date = dat[0]["key"]
+        max_date = dat[len(dat) - 1]["key"]
+        min_data = res["dedup"]["min"]["value"]
+        min_data = d_opt["min_x"] if d_opt["min_x"] < min_data else min_data
+        min_data = 0 if min_data < 1 else min_data - 1
+        max_data = res["dedup"]["max"]["value"]
+        max_data = (d_opt["max_x"] if d_opt["max_x"] > max_data else max_data) + 1
+
+        ret3 = { data: {"data": [], "limits": {"y": {"min": min_date, "max": max_date}, "x": {"min": min_data, "max": max_data}, "opt": d_opt["opt"]}}}
+
+        i = 0
+        while i < len(dat):
+            ret3[data]["data"].append({"y": dat[i][data]["value"], "t": dat[i]["key"]})
+            i += 1
+        #ret1 = { "data": res[i], "limits": {"y": {"min": min_y, "max": max_y}, "x": {"min": min_x - 1 if min_x >= 1 else 0, "max": max_x + 1}, "opt": opt}}
+        return ret1, ret2, ret3
 
     def __infos_query(self, id_points, date_start = None, date_end = None, limit = None):
         range = {"from": "0"}
