@@ -376,7 +376,7 @@ methods: {
     data['headers'] = cred.methods.get_headers()
     data['data'] = {
     	"id_point": id,
-    	"datas": [this.received[0]]
+    	"datas": this.received[0]
     }
     this.received[1] = 0
     if (id != void 0)

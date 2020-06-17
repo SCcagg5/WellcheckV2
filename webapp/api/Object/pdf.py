@@ -119,19 +119,5 @@ class pdf_doc:
                  renderPDF.draw(dr, pdf, 210 * mm - 82, 2)
         return [True, {"doc_id": id_doc, "Content": str(base64.b64encode(pdf.getpdfdata().decode('utf8', 'ignore').encode('ascii')))[2:-1], "Type": "pdf"}, None]
 
-    def ret_bin(self, delete = False):
-        ret = ""
-        if self.filename is not None:
-            if not os.path.exists("/home/api/" + self.filename):
-                return [False, "file does not exist", 404]
-            with open("/home/api/" + self.filename, 'rb') as f:
-                lines = [l.decode('utf8', 'ignore') for l in f.readlines()]
-            for i in lines:
-                ret += i
-            f.close()
-            if delete is True:
-                os.remove("/home/api/" + self.filename)
-        return [True, {"Content": ret.replace('\\n', '\n'), "Type": "pdf"}, None]
-
     def __getsecret(self):
         return str(os.getenv('API_SCRT', '!@ws4RT4ws212@#%'))
