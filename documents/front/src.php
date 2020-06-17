@@ -39,7 +39,6 @@
       curl_close($curl);
       $file = base64_decode(json_decode($response)->data->Content);
       $doc_id = json_decode($response)->data->doc_id;
-      header('Content-Length: ' . strlen($file));
       print($file);
       $name = '/savedoc/report.'.$id.'_'.$start.'_'.$end.'.'.$doc_id.'.pdf';
       $pdf = fopen ($name, 'w');
