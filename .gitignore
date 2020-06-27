@@ -8,6 +8,8 @@ proxy/vhost/localhost
 conf.js
 documents/save
 
-proxy/certs
-proxy/html
+Proxy/certs
+Proxy/html
+Proxy/conf
+Proxy/vhost
 docker-gen*

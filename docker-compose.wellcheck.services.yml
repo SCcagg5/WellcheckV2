@@ -6,7 +6,7 @@ networks:
 
 services:
   autodata:
-    build: ./webapp/autodata
+    build: ./Wellcheck/Micro/Autodata
     container_name: autodata
     tty: true
     stdin_open: true
