@@ -1183,6 +1183,10 @@ font-size: 21px;
 	display: block;
 }
 
+.hidelg {
+        display: block;
+}
+
 .modalelist {
 	overflow-y: scroll;
 	 height: 200px;
@@ -1204,6 +1208,12 @@ font-size: 21px;
 		height: 20px;
 		width: 100%;
 	}
+}
+
+@media(min-width:768px){
+     .hidelg {
+	display: none;
+    }
 }
 
 @media(max-width:575px){

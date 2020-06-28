@@ -40,10 +40,30 @@ $dat .= "'";
               <h2>Actions:</h2>
               <br>
               <button type="button" class="btn btn-outline-primary ml-auto mr-3" onclick="all_user()">List all users</button>
+              <button type="button" class="btn btn-outline-primary ml-auto mr-3" onclick="mesure()">Points</button>
           </div>
           </div>
         </div>
         <div id="content" class="col-12 row">
+          <div id="mesure" class="col-12 row cont cont-hover" style="width: calc(100% - 15px); margin-left: 15px">
+		<input id="point" type="text" placeholder="Point id" class="form-control compinput col-md-12  col-sm-12 col-12" style="margin-bottom: 20px">
+                
+		<textarea id="mesure"  rows="14" cols="30" class="form-control compinput col-md-12  col-sm-12 col-12">
+{
+  'data': {
+    "ph": ,
+    "turbidity": ,
+    "redox": ,
+    "temp": ,
+    "note": null, //overwritten if null
+  },
+  'pos': {
+    'lon': ,
+    'lat': ,
+  }
+}
+               </textarea>
+          </div>
           <div id="users"  class="col-12" style="display: none">
             <div class="cont cont-hover">
               <table id="userstable" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%" style="text-align: center">

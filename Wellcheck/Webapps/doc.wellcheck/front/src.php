@@ -1,5 +1,5 @@
 <?php
-  function get_pdf($id, $start, $end, $DL = 'false'){
+  function get_pdf($id, $start, $end, $docid, $DL = 'false'){
     header('Cache-Control: public');
     header('Content-Type: application/pdf');
 
@@ -19,7 +19,14 @@
         $file =  $res[$i];
       }
     }
-    if ($file == ""){
+    if ($docid != NULL){
+       $name = '/savedoc/report.*_*_*.'.$doc_id.'.pdf';
+       $pdf_h = fopen('/savedoc'.'/' . $file,'r');
+       $content = fread($pdf_h, filesize('/savedoc'.'/' . $file));
+       fclose ($pdf_h);
+       header('Content-Length: ' . strlen($content));
+       print($content);
+    } else if ($file == ""){
       $curl = curl_init();
       curl_setopt_array($curl, array(
         CURLOPT_URL => "map_bck-end:8080/pdf/report/",
@@ -44,7 +51,7 @@
       $pdf = fopen ($name, 'w');
       fwrite ($pdf, $file);
       fclose ($pdf);
-    }else {
+    } else {
       $pdf_h = fopen('/savedoc'.'/' . $file,'r');
       $content = fread($pdf_h, filesize('/savedoc'.'/' . $file));
       fclose ($pdf_h);
@@ -54,5 +61,5 @@
     }
   }
   if (isset($_GET["id"]) &&  isset($_GET["from"]) && isset($_GET["to"])) {
-    get_pdf($_GET["id"], $_GET["from"], $_GET["to"]);
+    get_pdf($_GET["id"], $_GET["from"], $_GET["to"], $_GET["doc"]);
   }

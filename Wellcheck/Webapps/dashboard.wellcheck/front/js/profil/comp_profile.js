@@ -191,6 +191,15 @@ let profile = {
                         <div class="wc-button" v-on:click="updatevis()"> update </div>
                       </container>
                     </div>
+                    <div class="col-lg-1 col-sm-12 hidelg">
+                      <br>
+                    </div>
+                    <div class="col-lg-4 col-sm-8">
+                      <container name="Password" hover=true>
+                        <br>
+                        <div class="wc-button" style="width: 100%" v-on:click=editProfile> Change your password </div>
+                      </container>
+                    </div>
                   </div>
                 </div>
               </div>
