@@ -10,6 +10,5 @@ documents/save
 
 Proxy/certs
 Proxy/html
-Proxy/conf
-Proxy/vhost
+Proxy/conf/default.conf
 docker-gen*
